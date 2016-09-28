@@ -1,5 +1,9 @@
 \documentclass{assignment}
 
+\usepackage{enumitem}
+\usepackage{xfrac}% http://ctan.org/pkg/xfrac
+
+
 \coursetitle{Introduction to Cryptography}
 \courselabel{CPSC 418}
 \exercisesheet{Home Work \#[number]}{}
@@ -29,17 +33,96 @@ Total & \\ \hline
 \bigskip
 
 \begin{problemlist}
-\pbitem [Problem Title]
+\pbitem (A substitution cipher cryptanalysis, 10 marks plus 1 bonus mark)
+\begin{problem}
+	\begin{answer}
+		\begin{enumerate}[label=(\alph*)]
+		\item Letter Frequency: \\
+		\begin{tabular}{ l l l l l l l }
+  			A: 45 & B: 2 & C: 46 & D: 19 & E: 26 & F: 30 & G: 13\\
+  			H: 4 & I: 55 & J: 71 & K: 28 & L: 18 & M: 7 & N: 30\\
+  			O: 84 & P: 56 & Q: 16 & R: 58 & S: 15 & T: 56 & U: 56\\
+  			V: 8 & W: 1 & X: 135 & Y: 2 & Z: 23
+		\end{tabular}
+		\\
+		\item Plain Text: \\
+		Case was twenty-four. At twenty-two, he'd been a cowboy, a rustler, one of the best in the Sprawl. He'd been trained by the best, by McCoy Pauley and Bobby Quine, legends in the biz. He'd operated on an almost permanent adrenaline high, a byproduct of youth and proficiency, jacked into a custom cyberspace deck hat projected his disembodied consciousness into the consensual hallucination that was the matrix. A thief, he'd worked for other, wealthier thieves, employers who provided the exotic software required to penetrate the bright walls of corporate systems, opening windows into rich fields of data.
+
+He's made the classic mistake, the one he's sworn he'd never make. He stole from his employers. He kept something for himself and tried to move it through a fence in Amsterdam. He still wasn't sure how he'd been discovered, not that it mattered now. He'd expected to die, then but they only smiled. Of course he was welcome, they told him, welcome to the money. And he was going to need it. Because--still smiling--they were going to make sure he never worked again.
+
+They damaged his nervous system with a wartime Russian mycotoxin. \\
+	
+		\item William Gibson 
+
+		\end{enumerate}
+		
+	\end{answer}
+\end{problem}
+
+\pbitem (Superencipherment for substitution ciphers, 12 marks)
 \begin{problem}
 \begin{answer}
-[Answer]
+\begin{enumerate}[label=(\alph*)]
+	\item	\begin{enumerate}[label=(\roman*)]
+			\item hello
+			\item there
+			\end{enumerate}
+			
+	\item 	\begin{enumerate}[label=(\roman*)]
+			\item hello
+			\item there
+			\end{enumerate}
+\end{enumerate}
 \end{answer}
 \end{problem}
 
-\pbitem [Problem Title]
+\pbitem (Equiprobability maximizes entropy for two outcomes, 12 marks)
 \begin{problem}
 \begin{answer}
-[Answer]
+\begin{enumerate}[label=(\alph*)]
+	\item	Let $ p(X_1) = \frac{1}{4} $ and let $ p(X_2) = \frac{3}{4} $	\\
+			$H(X) = -p \ log_2(p) -(1-p) \ log_2(1-p) $ \\
+			$H(X) = -\frac{1}{4} \ log_2(\frac{1}{4}) -\frac{3}{4} \ log_2(\frac{3}{4}) $ \\
+			$H(X) = 0.5 + 0.311278...$ \\
+			$H(X) = 0.811278.. $
+			
+	\item 	Prove that if $H(X)$ is maximal, then both outcomes are equally likely. \\
+			Let $H(X) = -p \log_2 (p) - (1-p) \log_2 (1-p)$, where $p$ is the probability 
+			outcome such that $p + (1-p) = 1$. \\
+			Case 1: $ p > (1- p) $\\
+			Case 2: $ p < (1- p) $\\
+			Case 3: $ p == (1- p) $\\
+		
+			
+	\item 	The maximal value of $H(X)$ is 1, when $p(X_1) = \frac{1}{2}$ and $p(X_2) = \frac{1}{2}$
+\end{enumerate}
+\end{answer}
+\end{problem}
+
+\clearpage
+
+\pbitem (Key size versus password size, 21 marks)
+\begin{problem}
+\begin{answer}
+\begin{enumerate}[label=(\alph*)]
+	\item	$127^8$??
+	\item 	\begin{enumerate}[label=(\roman*)]
+			\item Since there are, $94$ allowed ASCII characters and the ength of the password is exactly $8$. That means at each character slot there are $94$ differently possibilities.\\
+			Therefore we get the equation:\\
+				total permissible passwords = $94^8$ \\
+				total permissible passwords = $6095689385410816$ \\
+				total permissible passwords = $6.1$ x $10^{15}$ \\
+			
+			\item $\frac{94^8}{127^8} = 0.09... $ \\
+				  roughly about 9\% of all ASCII is usable for passwords
+			\end{enumerate}
+	\item entropy = -$\sum_{0}^{94} (\frac{1}{94})  \log_2(\frac{1}{94})$ 
+	\item entropy = -$\sum_{0}^{26} (\frac{1}{26})  \log_2(\frac{1}{26})$
+	\item 	\begin{enumerate}[label=(\roman*)]
+			\item hello
+			\item there
+			\end{enumerate}
+\end{enumerate}
 \end{answer}
 \end{problem}
 
