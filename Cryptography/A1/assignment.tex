@@ -31,6 +31,7 @@ Total & \\ \hline
 \end{center}
 
 \bigskip
+\clearpage
 
 \begin{problemlist}
 \pbitem (A substitution cipher cryptanalysis, 10 marks plus 1 bonus mark)
@@ -64,7 +65,14 @@ They damaged his nervous system with a wartime Russian mycotoxin. \\
 \begin{answer}
 \begin{enumerate}[label=(\alph*)]
 	\item	\begin{enumerate}[label=(\roman*)]
-			\item hello
+			\item let $ E_k(M) = M + K (mod \hspace{.5em} 26) $ be the shift cipher and $M$ represents the plain text 
+				  and $K$ the key to shift each letters by. \\
+				  Let there be keys $K_1$ and $K_2$. \\
+				  Then when we use $K_1$ we have $E_{k1}(M) =  M + K_{k1} (mod \hspace{.5em} 26) $ \\
+				  Then when we apply it to $K_2$ we have $E_{k2}(E_{k1}(M)) = (M + K_{1} (mod \hspace{.5em} 26)) + K_{k2} (mod \hspace{.5em} 26) $ \\
+				  We can simplify it to $M + ((K_{1} + K_{2}) (mod \hspace{.5em} 26)) $ \\
+				  Where we let $(K_1 + K_2)$ be another key $K_3$. \\
+				  Therefore we proved that doing the shift cipher twice just results in another shift cipher with a key of $(K_1 + K_2)$. \\
 			\item there
 			\end{enumerate}
 			
