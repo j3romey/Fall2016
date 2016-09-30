@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2016/dev) (preloaded format=pdflatex 2016.7.19)  28 SEP 2016 16:36
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2016/dev) (preloaded format=pdflatex 2016.7.19)  29 SEP 2016 14:53
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -440,29 +440,47 @@ Underfull \hbox (badness 10000) in paragraph at lines 63--66
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 68--76
+Underfull \hbox (badness 10000) in paragraph at lines 68--77
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 87--90
+Overfull \hbox (10.94106pt too wide) in paragraph at lines 68--77
+\OT1/cmr/m/n/10 Then we ap-ply an-other shift ci-pher of key $\OML/cmm/b/it/10 
+K[]$ \OT1/cmr/m/n/10 on $\OML/cmm/b/it/10 E[]\OT1/cmr/bx/n/10 (\OML/cmm/b/it/10
+ M\OT1/cmr/bx/n/10 )$ \OT1/cmr/m/n/10 re-sult-ing in $\OML/cmm/b/it/10 E[]\OT1/
+cmr/bx/n/10 (\OML/cmm/b/it/10 E[]\OT1/cmr/bx/n/10 (\OML/cmm/b/it/10 M\OT1/cmr/b
+x/n/10 )) =
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 68--77
 
  []
 
 [2
 
 ]
-Underfull \hbox (badness 10000) in paragraph at lines 97--103
-
- []
-
-[3]
-Underfull \hbox (badness 10000) in paragraph at lines 112--115
+Underfull \hbox (badness 10000) in paragraph at lines 81--83
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 118--123
+Underfull \hbox (badness 10000) in paragraph at lines 94--97
+
+ []
+
+[3
+
+]
+Underfull \hbox (badness 10000) in paragraph at lines 120--123
+
+ []
+
+Missing character: There is no Ã in font cmbx10!
+Missing character: There is no — in font cmbx10!
+
+Underfull \hbox (badness 10000) in paragraph at lines 126--131
 
  []
 
@@ -472,11 +490,11 @@ Underfull \hbox (badness 10000) in paragraph at lines 118--123
 Here is how much of TeX's memory you used:
  9618 strings out of 495003
  185254 string characters out of 6181405
- 210807 words of memory out of 5000000
+ 209807 words of memory out of 5000000
  12811 multiletter control sequences out of 15000+600000
  7757 words of font info for 27 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 45i,6n,42p,10421b,398s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 45i,6n,42p,10421b,516s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/share/texlive/texmf-dist/fonts/type1/public/amsfont
 s/cm/cmbsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/
 cmbx10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx5.
@@ -490,7 +508,7 @@ st/fonts/type1/public/amsfonts/cm/cmss10.pfb></usr/share/texlive/texmf-dist/fon
 ts/type1/public/amsfonts/cm/cmssi10.pfb></usr/share/texlive/texmf-dist/fonts/ty
 pe1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/pu
 blic/amsfonts/cm/cmti10.pfb>
-Output written on assignment.pdf (4 pages, 150640 bytes).
+Output written on assignment.pdf (4 pages, 151336 bytes).
 PDF statistics:
  69 PDF objects out of 1000 (max. 8388607)
  49 compressed objects within 1 object stream

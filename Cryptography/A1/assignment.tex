@@ -65,17 +65,24 @@ They damaged his nervous system with a wartime Russian mycotoxin. \\
 \begin{answer}
 \begin{enumerate}[label=(\alph*)]
 	\item	\begin{enumerate}[label=(\roman*)]
-			\item let $ E_k(M) = M + K (mod \hspace{.5em} 26) $ be the shift cipher and $M$ represents the plain text 
+			\item Let $ E_k(M) = M + K (mod \hspace{.5em} 26) $ be the shift cipher and $M$ represents the plain text 
 				  and $K$ the key to shift each letters by. \\
 				  Let there be keys $K_1$ and $K_2$. \\
-				  Then when we use $K_1$ we have $E_{k1}(M) =  M + K_{k1} (mod \hspace{.5em} 26) $ \\
-				  Then when we apply it to $K_2$ we have $E_{k2}(E_{k1}(M)) = (M + K_{1} (mod \hspace{.5em} 26)) + K_{k2} (mod \hspace{.5em} 26) $ \\
+				  \\
+				  We use $K_1$ to encrypt $M$ in a shift cipher $E_{k1}(M) =  M + K_{k1} (mod \hspace{.5em} 26) $ \\
+				  Then we apply another shift cipher of key $K_2$ on $E_{k1}(M)$ resulting in $E_{k2}(E_{k1}(M)) = (M + K_{1} (mod \hspace{.5em} 26)) + K_{2} (mod \hspace{.5em} 26) $ \\
 				  We can simplify it to $M + ((K_{1} + K_{2}) (mod \hspace{.5em} 26)) $ \\
 				  Where we let $(K_1 + K_2)$ be another key $K_3$. \\
 				  Therefore we proved that doing the shift cipher twice just results in another shift cipher with a key of $(K_1 + K_2)$. \\
-			\item there
-			\end{enumerate}
+
 			
+\clearpage				  
+				
+			\item Let $ E_k(M) = M + K (mod \hspace{.5em} 26) $ be the shift cipher and $M$ represents the plain text 
+				  and $K$ the key to shift each letters by. \\
+			\end{enumerate}
+
+
 	\item 	\begin{enumerate}[label=(\roman*)]
 			\item hello
 			\item there
@@ -100,6 +107,7 @@ They damaged his nervous system with a wartime Russian mycotoxin. \\
 			Case 1: $ p > (1- p) $\\
 			Case 2: $ p < (1- p) $\\
 			Case 3: $ p == (1- p) $\\
+			Wrong use notes and get derivative to find the maximum
 		
 			
 	\item 	The maximal value of $H(X)$ is 1, when $p(X_1) = \frac{1}{2}$ and $p(X_2) = \frac{1}{2}$
@@ -113,7 +121,7 @@ They damaged his nervous system with a wartime Russian mycotoxin. \\
 \begin{problem}
 \begin{answer}
 \begin{enumerate}[label=(\alph*)]
-	\item	$127^8$??
+	\item	There are 128 possible characters in the ASCII encoding, and we have a space of 8 characters, therefore that gives us $127^8 = 6.7675234241018881 × 10^{16}$
 	\item 	\begin{enumerate}[label=(\roman*)]
 			\item Since there are, $94$ allowed ASCII characters and the ength of the password is exactly $8$. That means at each character slot there are $94$ differently possibilities.\\
 			Therefore we get the equation:\\
@@ -124,11 +132,11 @@ They damaged his nervous system with a wartime Russian mycotoxin. \\
 			\item $\frac{94^8}{127^8} = 0.09... $ \\
 				  roughly about 9\% of all ASCII is usable for passwords
 			\end{enumerate}
-	\item entropy = -$\sum_{0}^{94} (\frac{1}{94})  \log_2(\frac{1}{94})$ 
-	\item entropy = -$\sum_{0}^{26} (\frac{1}{26})  \log_2(\frac{1}{26})$
+	\item entropy = -$\sum_{0}^{94^8} (\frac{1}{94^8})  \log_2(\frac{1}{94^8})$ 
+	\item entropy = -$\sum_{0}^{26^8} (\frac{1}{26^8})  \log_2(\frac{1}{26^8})$
 	\item 	\begin{enumerate}[label=(\roman*)]
-			\item hello
-			\item there
+			\item $94^? = 2^{128}$
+			\item $26^? = 2^{128}$
 			\end{enumerate}
 \end{enumerate}
 \end{answer}
