@@ -2,7 +2,7 @@
 
 \usepackage{enumitem}
 \usepackage{xfrac}% http://ctan.org/pkg/xfrac
-
+\usepackage[fleqn]{amsmath}
 
 \coursetitle{Introduction to Cryptography}
 \courselabel{CPSC 418}
@@ -135,8 +135,25 @@ They damaged his nervous system with a wartime Russian mycotoxin. \\
 	\item entropy = -$\sum_{0}^{94^8} (\frac{1}{94^8})  \log_2(\frac{1}{94^8})$ 
 	\item entropy = -$\sum_{0}^{26^8} (\frac{1}{26^8})  \log_2(\frac{1}{26^8})$
 	\item 	\begin{enumerate}[label=(\roman*)]
-			\item $94^? = 2^{128}$
-			\item $26^? = 2^{128}$
+			\item 
+				  \begin{align*}
+					94^x &= 2^{128}  \\
+				 	\ln(94^x) &= ln(2^{128}) \\
+				  	x \: ln(94) &= 128 \: ln(2) \\
+				  	x &= \frac{128 \: ln(2)}{ln(94)} \\
+				  	x &= 19.5283034 \\
+				  	x &\approx 20 \\
+				  \end{align*}
+				  	We need about a 20 characted length password to get an entropy of 128 given 94 usable characters
+			\item 	\begin{align*}
+						26^x &= 2^{128}
+						\ln(26^x) &= ln(2^{128}) \\
+				  		x \: ln(26) &= 128 \: ln(2) \\
+				  		x &= \frac{128 \: ln(2)}{ln(26)} \\
+				  		x &= 27.2314948 \\
+				  		x &\approx 28 \\
+					\end{align*}
+					We need about a 28 characted length password to get an entropy of 128 given 26 usable characters
 			\end{enumerate}
 \end{enumerate}
 \end{answer}
