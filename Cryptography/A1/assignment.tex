@@ -3,6 +3,7 @@
 \usepackage{enumitem}
 \usepackage{xfrac}% http://ctan.org/pkg/xfrac
 \usepackage[fleqn]{amsmath}
+\newcommand*{\xdash}[1][3em]{\rule[0.5ex]{#1}{0.55pt}}
 
 \coursetitle{Introduction to Cryptography}
 \courselabel{CPSC 418}
@@ -79,13 +80,40 @@ They damaged his nervous system with a wartime Russian mycotoxin. \\
 \clearpage				  
 				
 			\item Let $ E_k(M) = M + K (mod \hspace{.5em} 26) $ be the shift cipher and $M$ represents the plain text 
-				  and $K$ the key to shift each letters by. \\
+				  and $K$ represent the key to shift each letters by. \\
+				
+				base case (K = 0): 
+				\begin{align*}
+					E_{k0}(M) &= M + K_0  (mod \hspace{.5em} 26) \\
+					E_{k0}(M) &= M + 0
+				\end{align*}
+				since the key is 0 the plain text remains the same since no shift occurs?
+				
+				Inductive Step:
+				Assume there is a K, greater than or equal to zero, such that $ E_k(M) = M + K (mod \hspace{.5em} 26) $.\\
+				
+
+				The key of multiple encipherment is just the sum of all the keys used.
 			\end{enumerate}
 
 
 	\item 	\begin{enumerate}[label=(\roman*)]
-			\item hello
-			\item there
+			\item yes, the new keyword of using the keyword $WORD$  and $CIPHER$ \\ is $YWGKAFTLLVVU$\\
+			This key is created by adding each corresponding letter of the two keywords based on their index and repeating each keyword 
+			if necessary until both keywords are an equal length. \\
+		
+			
+			W\,O\,R\,D\,W\,O\,R\,D\,W\,O\,R\,D \\
+			C\enspace I\enspace P\;H\;E\enspace R C I P\:H\;E\;R \\
+			\xdash[12em] \\ 
+			Y\,W\,G\,K\,A\enspace F\enspace T\,L\,L\,V\,V\,U
+			
+			
+
+
+			\item Yes, to obtain the corresponding key word you add each letter of $m_1$ to each corresponding character to $m_2$ based on its index in the alphabet $(0 ... 25) $ and modulo it by 26. \\
+			\textit{eg:} $m_1.charAt(0) = T$ and $m_2.charAt(0) = I$. Since $I$ is at index $9$ we shift that many letters from $T$ and since we modulo it by 26 the combined vigenere cipher of characters $T$ and $I$ is $B$.
+			As for the length of the new key word, it will be the least common multiple length that $m_1$ and $m_2$ share
 			\end{enumerate}
 \end{enumerate}
 \end{answer}
@@ -101,15 +129,25 @@ They damaged his nervous system with a wartime Russian mycotoxin. \\
 			$H(X) = 0.5 + 0.311278...$ \\
 			$H(X) = 0.811278.. $
 			
-	\item 	Prove that if $H(X)$ is maximal, then both outcomes are equally likely. \\
-			Let $H(X) = -p \log_2 (p) - (1-p) \log_2 (1-p)$, where $p$ is the probability 
+	\item 	To prove that $H(X)$ is maximal, when both outcomes are equally likely. \\
+			we take the derivative of  $H(X) = -p \log_2 (p) - (1-p) \log_2 (1-p)$, where $p$ is the probability 
 			outcome such that $p + (1-p) = 1$. \\
-			Case 1: $ p > (1- p) $\\
-			Case 2: $ p < (1- p) $\\
-			Case 3: $ p == (1- p) $\\
-			Wrong use notes and get derivative to find the maximum
-		
-			
+			\begin{align*}
+					H(X) &= -p \log_2 (p) - (1\!-\!p) \log_2 (1\!-\!p)\\
+					H'(X) &= [  - \log_2(p)   + p \frac{1}{ p\ln(2)}] - [ (-1) log_2(1-p) + (1\!-\!p) \frac{1}{ (1-p)\ln(2)}  ]\\
+					H'(X) &=  - \log_2(p) - \frac{1}{ \ln(2)}  + log_2(1-p) +  \frac{1}{ \ln(2)}  \\ 
+					H'(X) &=  - \log_2(p) + log_2(1-p) \\ 
+					H'(X) &=  log_2(1-p) - \log_2(p) \\ 
+			\end{align*}
+			Now we set H'(X) = 0 and solve for $p$ to find the maximum value for H(X) \\
+			\begin{align*}
+					H'(X) &=  log_2(1-p) - \log_2(p) \\ 
+					0 &=  log_2(1-p) - \log_2(p) \\ 
+					0 &=  (1-p) - p \\
+					p & = 1 - p \\
+					2p &= 1 \\
+					p &= \frac{1}{2} 
+			\end{align*}			
 	\item 	The maximal value of $H(X)$ is 1, when $p(X_1) = \frac{1}{2}$ and $p(X_2) = \frac{1}{2}$
 \end{enumerate}
 \end{answer}
