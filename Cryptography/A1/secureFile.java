@@ -15,6 +15,8 @@ public class secureFile {
 		byte[] dataBytes = "This is test data".getBytes();
 		try {
 			MessageDigest md = MessageDigest.getInstance("SHA");
+			KeyGenerator kg = KeyGenerator.getInstance("DES");
+			SecretKey sKey = kg.generateKey();
 			md.update(dataBytes);
 			byte[] digest = md.digest();
 		} catch (NoSuchAlgorithmException e) {
