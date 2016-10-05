@@ -10,57 +10,105 @@ import java.math.*;
 public class secureFile {
 	public static void main(String[] args) {
 		String filename = args[0];
-		String seed = args[1];
-		String out_filename = "TESTING";
+		String seed = args[1];	
+		String out_filename = filename;
 		
 		FileInputStream file_in = null;
 		FileOutputStream file_out = null;
-		
-		int read_bytes = 0;
-		int digest_size = 0;
-		// byte [] file_bytes
+	
+		// digest size is 20 bytes long
 		byte[] digest = null;
 		byte[] combined = null;
 		byte[] cipherFile = null;
-		
+		SecretKey secKey = null;
 		
 		//byte[] dataBytes = "This is test data".getBytes();
 		
 		try {
-			
-			MessageDigest md = MessageDigest.getInstance("SHA"); 
-			
 			// open file
 			file_in = new FileInputStream(filename);
-			file_out = new FileOutputStream(out_filename);
+			
 			// read file to byte
 			byte[] file_bytes = new byte[file_in.available()];
-			read_bytes = file_in.read(file_bytes);
+			file_in.read(file_bytes);
+			file_in.close();
+				
+			// create digest
+			digest = makeDigest(file_bytes); 
 			
-			// get digest
-			md.update(file_bytes);
-			digest = md.digest();
-			digest_size = digest.length;
-		
+			
+			// create key
+			secKey = makeKey(seed);
+			
+			//combine  file_bytes and digest
+			combined = combine(file_bytes, digest);
+			
 			// encrypt
-			KeyGenerator kg = KeyGenerator.getInstance("AES-128");
-			
-			SecretKey sKey = kg.generateKey();
-			
-			Cipher cipher = Cipher.getInstance("CBC");
-			cipher.init(Cipher.ENCRYPT_MODE, sKey);
-			cipherFile = cipher.doFinal(file_bytes);
+			Cipher cipher = Cipher.getInstance("AES");
+			cipher.init(Cipher.ENCRYPT_MODE, secKey);
+			cipherFile = cipher.doFinal(combined);
+
+			/*
+			System.out.println("Encryption Complete");
+			System.out.println("File Size: " + file_bytes.length);
+			System.out.println("Digest Size: " + digest_size);
+			System.out.println("Combined Size: " + combined.length);
+			System.out.println("Ciper Size: " + cipherFile.length);
+			System.out.println("Encrypted Filename: " +  out_filename);
+			*/
 			
 			// write to file
+			file_out = new FileOutputStream(out_filename);
 			file_out.write(cipherFile);
+			file_out.close();
 			
+			System.out.println("SUCESSFULLY ENCRYPTED FILE " + filename);
 			
-			//md.update(dataBytes);
-			// = md.digest();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} 
+	}
+	
+	public static byte[] makeDigest(byte[] a){
+		
+		MessageDigest md = null;
+		
+		try {
+			md = MessageDigest.getInstance("SHA1");
+			md.update(a);
+			
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		}
+		return md.digest();
+	}
+	
+	public static SecretKey makeKey(String a){
+		KeyGenerator kg = null;
+		SecureRandom random = null;
+		try {
+			kg = KeyGenerator.getInstance("AES");
+			random = SecureRandom.getInstance("SHA1PRNG");
+			random.setSeed(a.getBytes());
+			
+			kg.init(128, random);
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	
+		return kg.generateKey();
+	}
+
+	
+	public static byte[] combine(byte[] a, byte[] b){
+		byte[] temp = new byte[a.length + b.length];
+		
+		System.arraycopy(a, 0, temp, 0, a.length);
+		System.arraycopy(b, 0, temp, a.length, b.length);
+		
+		return temp;
 	}
 	
 	
