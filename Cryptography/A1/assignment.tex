@@ -74,26 +74,37 @@ They damaged his nervous system with a wartime Russian mycotoxin. \\
 				  Then we apply another shift cipher of key $K_2$ on $E_{k1}(M)$ resulting in $E_{k2}(E_{k1}(M)) = (M + K_{1} (mod \hspace{.5em} 26)) + K_{2} (mod \hspace{.5em} 26) $ \\
 				  We can simplify it to $M + ((K_{1} + K_{2}) (mod \hspace{.5em} 26)) $ \\
 				  Where we let $(K_1 + K_2)$ be another key $K_3$. \\
-				  Therefore we proved that doing the shift cipher twice just results in another shift cipher with a key of $(K_1 + K_2)$. \\
+				  Therefore we proved that doing the shift cipher twice just results in another shift cipher with a key of $(K_1 + K_2)=K_3$. \\
 
 			
 \clearpage				  
 				
 			\item Let $ E_k(M) = M + K (mod \hspace{.5em} 26) $ be the shift cipher and $M$ represents the plain text 
 				  and $K$ represent the key to shift each letters by. \\
-				
 				base case (K = 0): 
 				\begin{align*}
 					E_{k0}(M) &= M + K_0  (mod \hspace{.5em} 26) \\
 					E_{k0}(M) &= M + 0
 				\end{align*}
-				since the key is 0 the plain text remains the same since no shift occurs?
 				
-				Inductive Step:
-				Assume there is a K, greater than or equal to zero, such that $ E_k(M) = M + K (mod \hspace{.5em} 26) $.\\
-				
+				base case (K = 1): 
+				\begin{align*}
+					E_{k1}(M) &= M + K_1  (mod \hspace{.5em} 26) \\
+					E_{k1}(M) &= M + 1
+				\end{align*}
 
-				The key of multiple encipherment is just the sum of all the keys used.
+				
+				Assume there is a K, greater than or equal to 1, such that \\ $ E_{k1}(M) = M + (K_1) (mod \hspace{.5em} 26) $.\\ 
+				Now we want to prove that $ E_{k1+1}(M) = M + (K_1+1) (mod \hspace{.5em} 26) $  also holds true. \\
+				Inductive Step:
+				\begin{align*}
+					E_{k1+1}(M) &= M + (K_1+1)  (mod \hspace{.5em} 26) \\
+					E_{k1+1}(M) &= M + (K_1 (mod \hspace{.5em} 26) ) + (1 (mod \hspace{.5em} 26) ) \\
+					E_{k1+1}(M) &= ( M + K_1 (mod \hspace{.5em} 26) ) + (1 (mod \hspace{.5em} 26) ) \\
+					E_{k1+1}(M) &= E_{k1}(M) + (1 (mod \hspace{.5em} 26) ) \\
+					E_{k1+1}(M) &= E_{k1}(M) + 1
+				\end{align*}
+				Therefore by induction the key of multiple encipherment with shift cipher results in another shift cipher where the new key is just the sum of all the keys used previously.
 			\end{enumerate}
 
 
@@ -118,6 +129,8 @@ They damaged his nervous system with a wartime Russian mycotoxin. \\
 \end{enumerate}
 \end{answer}
 \end{problem}
+
+\clearpage
 
 \pbitem (Equiprobability maximizes entropy for two outcomes, 12 marks)
 \begin{problem}
@@ -159,22 +172,30 @@ They damaged his nervous system with a wartime Russian mycotoxin. \\
 \begin{problem}
 \begin{answer}
 \begin{enumerate}[label=(\alph*)]
-	\item	There are 128 possible characters in the ASCII encoding, and we have a space of 8 characters, therefore that gives us $127^8 = 6.7675234241018881 × 10^{16}$
+	\item	There are 128 possible characters in the ASCII encoding, and we have a space of 8 characters, therefore that gives us $128^8 = 
+7.205759 \times 10^{16}$
 	\item 	\begin{enumerate}[label=(\roman*)]
 			\item Since there are, $94$ allowed ASCII characters and the ength of the password is exactly $8$. That means at each character slot there are $94$ differently possibilities.\\
 			Therefore we get the equation:\\
-				total permissible passwords = $94^8$ \\
-				total permissible passwords = $6095689385410816$ \\
-				total permissible passwords = $6.1$ x $10^{15}$ \\
+				$94^8$  = $6095689385410816$ \\
+				total permissible passwords = $6.1$ x $10^{15}$ 
 			
-			\item $\frac{94^8}{127^8} = 0.09... $ \\
-				  roughly about 9\% of all ASCII is usable for passwords
+			\item $\frac{94^8}{128^8} = 0.084594... $ 
+				  roughly about 8.5\% of all ASCII are usable for passwords
 			\end{enumerate}
-	\item entropy = -$\sum_{0}^{94^8} (\frac{1}{94^8})  \log_2(\frac{1}{94^8})$ 
-	\item entropy = -$\sum_{0}^{26^8} (\frac{1}{26^8})  \log_2(\frac{1}{26^8})$
+	\item The entropy of a 8 character length password with 94 usable characters is: 
+		\begin{align*}
+		H(X) &= \log_2(94^8) \\  
+		H(X) &= 2.436710
+		\end{align*}
+		
+	\item  The entropy of a 8 character length password with 26 usable characters is: 
+		\begin{align*}
+		H(X) &= \log_2(26^8) \\  
+		H(X) &= 37.603517
+		\end{align*}
 	\item 	\begin{enumerate}[label=(\roman*)]
-			\item 
-				  \begin{align*}
+			\item     \begin{align*}
 					94^x &= 2^{128}  \\
 				 	\ln(94^x) &= ln(2^{128}) \\
 				  	x \: ln(94) &= 128 \: ln(2) \\
@@ -194,6 +215,16 @@ They damaged his nervous system with a wartime Russian mycotoxin. \\
 					We need about a 28 characted length password to get an entropy of 128 given 26 usable characters
 			\end{enumerate}
 \end{enumerate}
+\end{answer}
+\end{problem}
+\setcounter{enumi}{6}
+\pbitem  (BONUS: Vigenere cipher cryptanalysis, 10 bonus marks)
+
+The first step is solving this problem is to apply frequencly analysis. But since it is a Vigenere cipher which is a polyalphabetic cipher, we need to apply letter frequency analysis at each of the character depending on length of the key, given in this case which is a length of 6. Therefore in my code I created a method to read the encrypted text and output the frequency at each index of the key. For example if wanted to know the letter frequency at the first character of the key, i would only print out the letters from the crypted text such that the index of the letter in the crypted text modded by 6 is equal to 0. I therefore repeated this step a total of 6 times, displaying the letter frequency for each case in my program. After checking the frequency I created an algorithm to decrypt the code given a key by subtracting the value of the crypted letter to its corresponding letter in the key, if the value is less than 0 i would subtract starting from Z and if its greater than 0 i would add starting at A. Once i had this algorith I initially set the key to "AAAAAA" which would keep the enciphered text as is and i would replace each appropriate "A" to the appropriate key based on the letter frequency. For example for every 6th characted in the encyphered text if the most frequent letter was "Q" i would assume its an "E" in plain text then on the Vigenere tableu I would look for "E" on the left hand column and search across is until i find "Q" and find the corresponding key letter in the top column which is "Q". This is not always true as my first pass did not yield me the appropriate key. Although the key was not initially correct I was able to see portions of fimiliar words in the semi-decrypted text and I was able to find the appropriate letters which led to the appropriate key "LAUNCH" 
+
+\begin{problem}
+\begin{answer}
+
 \end{answer}
 \end{problem}
 
