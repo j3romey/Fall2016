@@ -32,7 +32,6 @@ public class Server {
     	}
 
     	try {
-    		System.out.println(Integer.parseInt(args[0]));
     		Server s = new Server (Integer.parseInt(args[0]));
     	}catch (ArrayIndexOutOfBoundsException e) {
     		System.out.println ("Usage: java Server port#");
@@ -65,8 +64,8 @@ public class Server {
     	serverthreads = new Vector <ServerThread> (0,1);
 		
     	// GETS THE USER KEY FROM HERE
-    	System.out.print("Please enter shared Secrey Key: ");
-    	String key = sc.nextLine();
+    	//System.out.print("Please enter shared Secrey Key: ");
+    	//String key = sc.nextLine();
     	
     	
     	/* Output connection info for the server */

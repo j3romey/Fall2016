@@ -159,7 +159,8 @@ public class CryptoUtilities {
 	    // encrypt the message
 	    byte[] cipherText = cipher.doFinal(message);
 	    byte[] params = cipher.getParameters().getEncoded();
-			
+		System.out.println("PARAMS LENGTH: " + params.length);
+	    
 	    // Combine the ciphertext and cipher parameters into one byte array
 	    ret = new byte[cipherText.length+params.length];
 	    System.arraycopy(cipherText, 0, ret, 0, cipherText.length); 
@@ -181,34 +182,33 @@ public class CryptoUtilities {
      * @param keySpec  the secret key
      * @return decrypted message
      */
-    public static byte[] decrypt(byte[] decrypt, SecretKeySpec keySpec)
-    {
-	byte[] message = null;
+    public static byte[] decrypt(byte[] decrypt, SecretKeySpec keySpec){
+    	byte[] message = null;
 		
-	try {
-	    // Extract the cipher parameters from the end of the input array
-	    byte[] cipherText = new byte[decrypt.length - AES_PARAM_LEN];
-	    byte[] paramsEnc = new byte[AES_PARAM_LEN];
+    	try {
+    		// Extract the cipher parameters from the end of the input array
+    		byte[] cipherText = new byte[decrypt.length - AES_PARAM_LEN];
+    		byte[] paramsEnc = new byte[AES_PARAM_LEN];
 			
-	    System.arraycopy(decrypt, 0, cipherText, 0, cipherText.length);
-	    System.arraycopy(decrypt, cipherText.length, paramsEnc, 0, paramsEnc.length);
+    		System.arraycopy(decrypt, 0, cipherText, 0, cipherText.length);
+    		System.arraycopy(decrypt, cipherText.length, paramsEnc, 0, paramsEnc.length);
 
-	    // Initialize the parameters
-	    AlgorithmParameters params = AlgorithmParameters.getInstance("AES");
-	    params.init(paramsEnc);
+    		// Initialize the parameters
+    		AlgorithmParameters params = AlgorithmParameters.getInstance("AES");
+    		params.init(paramsEnc);
 	        
-	    // Initialize the cipher for decryption
-	    Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-	    cipher.init(Cipher.DECRYPT_MODE, keySpec, params);
+    		// Initialize the cipher for decryption
+    		Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+    		cipher.init(Cipher.DECRYPT_MODE, keySpec, params);
 			
-	    // Decrypt the ciphertext
-	    message = cipher.doFinal(cipherText);
+    		// Decrypt the ciphertext
+    		message = cipher.doFinal(cipherText);
 
-	} catch (Exception e) {
-	    e.printStackTrace();
-	}
+    	}catch (Exception e) {
+    		e.printStackTrace();
+    	}
 		
-	return message;
+    	return message;
     }
     
     public static int file_size(String filename){

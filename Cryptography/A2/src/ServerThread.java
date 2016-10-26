@@ -53,9 +53,17 @@ public class ServerThread extends Thread {
     	String incoming = null;
     	ByteArrayOutputStream buffer = new ByteArrayOutputStream();
     	DataInputStream in_2 = null;
+    	
+    	DataOutputStream out; 
+    	PrintWriter pw;
+    	
+    	
     	try {
-    		in_2 = new DataInputStream(new BufferedInputStream(sock.getInputStream()));
+    		in_2 = new DataInputStream(sock.getInputStream());
     		in = new BufferedReader (new InputStreamReader (sock.getInputStream()));
+    		
+    		out = new DataOutputStream(sock.getOutputStream());
+    		pw = new PrintWriter(out);
     	}catch (UnknownHostException e) {
     		System.out.println ("Unknown host error.");
     		return;
@@ -102,13 +110,43 @@ public class ServerThread extends Thread {
     		
     		// get the file name 
     		String filename = incoming;
-    		System.out.println ("Client " + idnum + ": " + "filename: " + incoming);
+    		System.out.println ("Client " + idnum + "- filename: " + incoming);
     		
     		
     		// get the file size
     		try {
     			incoming = in.readLine();
-    		}catch (IOException e) {
+    			
+    			System.out.println ("Client " + idnum + "- filesize: " + incoming);
+    			int n = Integer.parseInt(incoming);
+    			
+    			byte[] message = new byte[n];
+    			int read = 0;
+    			
+    			
+    			// this writes properly
+    			while ((read = in_2.read(message)) != -1) {
+    				//System.out.println("read: " + read);
+    		        //in_2.read(message);
+    				//fileOuputStream.write(message, 0, read);
+    				buffer.write(message, 0, read);
+    			}
+    			//fileOuputStream.close();
+    			buffer.flush(); 
+    			buffer.close();
+    			
+    			message = buffer.toByteArray();
+    			System.out.println("LENGTH: " + message.length);
+    			if(decryptFile.decrypt(message, "vanastrea4.jpg", "hi")){
+    				System.out.println("good");
+    			}else{
+    				System.out.println("bad");
+    			}
+    				
+    			
+    			
+    			
+    		}catch (Exception e) {
     			if (parent.getFlag()){
     				System.out.println ("shutting down.");
     				return;
@@ -117,21 +155,7 @@ public class ServerThread extends Thread {
     				return;
     			}
     		}
-    		int n = Integer.parseInt(incoming);
-    		System.out.println ("Client " + idnum + ": filesize: " + incoming);
-    		
-    		byte[] message = new byte[n];
-    		
-    		try {
-				in_2.read(message);
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-    		
-    		
-    		
-    		
+
     		/* Try to get the next line.  If an IOException occurs it is
     		 * probably because another client told the server to shutdown,
     		 * the server has closed this thread's socket and is signalling

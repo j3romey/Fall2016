@@ -33,11 +33,13 @@ public class secureFile{
 
 	    // read input file into a byte array
 	    byte[] msg = new byte[in_file.available()];
-	    in_file.read(msg);
+	    int read = in_file.read(msg);
 
 	    // compute key:  1st 16 bytes of SHA-1 hash of seed
 	    SecretKeySpec key = CryptoUtilities.key_from_seed(seed.getBytes());
 
+	    System.out.println("KEY: " + key);
+	    
 	    // append HMAC-SHA-1 message digest
 	    byte[] hashed_msg = CryptoUtilities.append_hash(msg,key);
 

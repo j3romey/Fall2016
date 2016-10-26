@@ -45,8 +45,8 @@ public class Client {
     	/* Allows us to get input from the keyboard. */
     	BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
     	PrintWriter pw;
-    	BufferedOutputStream out; 
-    	
+    	DataOutputStream out; 
+    	BufferedReader in;
     	
     	FileInputStream in_file = null;
 		
@@ -66,8 +66,8 @@ public class Client {
     	System.out.println ("Connected to " + sock.getInetAddress().getHostAddress() + " on port " + port);
     	
     	try {
-    		//out = new PrintWriter(sock.getOutputStream());
-    		out = new BufferedOutputStream(sock.getOutputStream());
+    		in = new BufferedReader (new InputStreamReader (sock.getInputStream()));
+    		out = new DataOutputStream(sock.getOutputStream());
     		pw = new PrintWriter(out);
     	}catch (IOException e) {
     		System.out.println ("Could not create output stream.");
@@ -91,25 +91,21 @@ public class Client {
     		System.out.print("Please enter destination Filename: ");
     		String filename_out = stdIn.readLine(); 
     		
+    		FileInputStream file = new FileInputStream(filename_in);
+    	    byte[] msg = new byte[file.available()];
+    	    int temp = file.read(msg);
+ 			
+    	    // send the filename destination and filesize
+    		pw.println(filename_out);
     		
-    		pw.println(filename_in);
-    		
-    		pw.println(CryptoUtilities.file_size(filename_in));
+    		String size = Integer.toString(CryptoUtilities.file_size(filename_in));
+    		pw.println(size);
     		pw.flush();
     		
     		// make message 
     		byte[] message = secureFile.encrypt(filename_in, "hi");
     		out.write(message);
-    		out.flush();
-  
-    		String test = "exit";
-    		
-    		// test case from byte[] -> string
-    		System.out.println("orig: " + test);
-    		System.out.println("send: " + new String(test.getBytes(), "UTF-8"));
-    		// send messages
-    		//out.println(filename_out);
-    		
+
     		
     		System.out.println("Transfer is done");
     		System.out.println("--------------------");
@@ -124,7 +120,7 @@ public class Client {
     		
     		
     		// exits the server
-    		out.write(test.getBytes());
+    		pw.println("test");
     		stdIn.close ();
 			out.close ();
 			sock.close();

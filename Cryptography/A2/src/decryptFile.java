@@ -18,10 +18,12 @@ import javax.crypto.spec.*;
  */
 public class decryptFile{
 
-    public static void decrypt(byte[] msg, String filename_out, String seed) throws Exception{
+    public static boolean decrypt(byte[] msg, String filename_out, String seed) throws Exception{
 	FileInputStream in_file = null;
 	FileOutputStream out_file = null;
 
+	boolean temp = false;
+	
 	try{
 	    out_file = new FileOutputStream(filename_out);
 
@@ -40,6 +42,7 @@ public class decryptFile{
 		byte[] plaintext = CryptoUtilities.extract_message(hashed_plaintext);
 			out_file.write(plaintext);
 	        out_file.close();
+	        temp = true;
 	    }
 	    else
 		System.out.println("ERROR:  invalid message digest!");
@@ -52,6 +55,7 @@ public class decryptFile{
 		in_file.close();
 	    }
 	}
+	return temp;
     }
 
 }
