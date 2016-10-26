@@ -1,4 +1,7 @@
 import java.net.*;
+
+import javax.crypto.spec.SecretKeySpec;
+
 import java.io.*;
 
 /**
@@ -6,11 +9,12 @@ import java.io.*;
  * thread to do in it's run() method.
  */
 
-public class ServerThread extends Thread {
-   
-	private Socket sock;  //The socket it communicates with the client on.
+public class ServerThread extends Thread
+{
+    private Socket sock;  //The socket it communicates with the client on.
     private Server parent;  //Reference to Server object for message passing.
     private int idnum;  //The client's id number.
+    private SecretKeySpec key;
 	
     /**
      * Constructor, does the usual stuff.
@@ -18,18 +22,21 @@ public class ServerThread extends Thread {
      * @param p Reference to parent thread.
      * @param id ID Number.
      */
-    public ServerThread (Socket s, Server p, int id){
-    	parent = p;
-    	sock = s;
-    	idnum = id;
+    public ServerThread (Socket s, Server p, int id, String k)
+    {
+	parent = p;
+	sock = s;
+	idnum = id;
+	key = CryptoUtilities.key_from_seed(k.getBytes());
     }
 	
     /**
      * Getter for id number.
      * @return ID Number
      */
-    public int getID (){
-    	return idnum;
+    public int getID ()
+    {
+	return idnum;
     }
 	
     /**
@@ -39,8 +46,9 @@ public class ServerThread extends Thread {
      * shutdown flag is true and terminate.
      * @return The Socket.
      */
-    public Socket getSocket (){
-    	return sock;
+    public Socket getSocket ()
+    {
+	return sock;
     }
 	
     /**
@@ -49,21 +57,16 @@ public class ServerThread extends Thread {
      * ask to be disconnected with "exit" or to shutdown the server with "die".
      */
     public void run (){
-    	BufferedReader in = null;
-    	String incoming = null;
+    	
     	ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-    	DataInputStream in_2 = null;
-    	
-    	DataOutputStream out; 
-    	PrintWriter pw;
-    	
-    	
+    
+    	DataInputStream dataIn;
+    	DataOutputStream dataOut;
+		
     	try {
-    		in_2 = new DataInputStream(sock.getInputStream());
-    		in = new BufferedReader (new InputStreamReader (sock.getInputStream()));
-    		
-    		out = new DataOutputStream(sock.getOutputStream());
-    		pw = new PrintWriter(out);
+    		dataIn = new DataInputStream(sock.getInputStream());
+    		dataOut = new DataOutputStream(sock.getOutputStream());
+    
     	}catch (UnknownHostException e) {
     		System.out.println ("Unknown host error.");
     		return;
@@ -71,107 +74,67 @@ public class ServerThread extends Thread {
     		System.out.println ("Could not establish communication.");
     		return;
     	}
-		
-    	/* Try to read from the socket */
+    	
     	try {
-    		incoming = in.readLine ();
-    	}catch (IOException e) {
-    		if (parent.getFlag()){
-    			System.out.println ("shutting down.");
-    			return;
-    		}
-    		return;
-    	}
-		
-    	/* See if we've recieved something */
-    	while (incoming != null) {
-    		/* If the client has sent "exit", instruct the server to
-    		 * remove this thread from the vector of active connections.
-    		 * Then close the socket and exit.
-    		 */
-    		if (incoming.compareTo("exit") == 0){
-    			parent.kill (this);
-    			try {
-    				in.close ();
-    				sock.close ();
-    			}catch (IOException e){
-    				/*nothing to do*/
-    			}
-    			return;
-		    }
+    		System.out.println("-------------------------------------");
+    		System.out.println("Incoming File Transfer from Client " + idnum);
+    		System.out.println("-------------------------------------");
+			int length = dataIn.readInt();
+			byte[] message = new byte[length];
 			
-    		/* If the client has sent "die", instruct the server to
-    		 * signal all threads to shutdown, then exit.
-    		 */
-    		else if (incoming.compareTo("die") == 0){
-    			parent.killall ();
-    			return;
-		    }	
-    		
-    		// get the file name 
-    		String filename = incoming;
-    		System.out.println ("Client " + idnum + "- filename: " + incoming);
-    		
-    		
-    		// get the file size
-    		try {
-    			incoming = in.readLine();
-    			
-    			System.out.println ("Client " + idnum + "- filesize: " + incoming);
-    			int n = Integer.parseInt(incoming);
-    			
-    			byte[] message = new byte[n];
-    			int read = 0;
-    			
-    			
-    			// this writes properly
-    			while ((read = in_2.read(message)) != -1) {
-    				//System.out.println("read: " + read);
-    		        //in_2.read(message);
-    				//fileOuputStream.write(message, 0, read);
-    				buffer.write(message, 0, read);
-    			}
-    			//fileOuputStream.close();
-    			buffer.flush(); 
-    			buffer.close();
-    			
-    			message = buffer.toByteArray();
-    			System.out.println("LENGTH: " + message.length);
-    			if(decryptFile.decrypt(message, "vanastrea4.jpg", "hi")){
-    				System.out.println("good");
-    			}else{
-    				System.out.println("bad");
-    			}
-    				
-    			
-    			
-    			
-    		}catch (Exception e) {
-    			if (parent.getFlag()){
-    				System.out.println ("shutting down.");
-    				return;
-    			}else{
-    				System.out.println ("IO Error.");
-    				return;
-    			}
-    		}
-
-    		/* Try to get the next line.  If an IOException occurs it is
-    		 * probably because another client told the server to shutdown,
-    		 * the server has closed this thread's socket and is signalling
-    		 * for the thread to shutdown using the shutdown flag.
-    		 */
-    		try {
-    			incoming = in.readLine();
-    		}catch (IOException e) {
-    			if (parent.getFlag()){
-    				System.out.println ("shutting down.");
-    				return;
-    			}else{
-    				System.out.println ("IO Error.");
-    				return;
-    			}
-    		}
-	    }
+			if(length > 0){
+				dataIn.readFully(message, 0, message.length);
+			}
+			
+			// get filename
+			String name = new String(message, "UTF-8");
+			System.out.println("Filename: " + name);
+			
+			// get file length
+			length = dataIn.readInt();
+			System.out.println("File size: " + length);
+			
+			// get encrypted file
+			message = new byte[length];
+			if(length > 0){
+				dataIn.readFully(message, 0, message.length);
+			}
+			
+			byte[] hashed_plaintext = CryptoUtilities.decrypt(message,key);
+			System.out.println("Recieved File");
+			
+			byte[] plaintext = CryptoUtilities.extract_message(hashed_plaintext);
+			System.out.println("Decrypted File");
+			
+			FileOutputStream f_out = new FileOutputStream(name);
+			f_out.write(plaintext);
+			f_out.close();
+			System.out.println("Finished Writing File");
+			
+			if (CryptoUtilities.verify_hash(hashed_plaintext,key)) {
+				byte[] ack = CryptoUtilities.encrypt("Acknowledged".getBytes(), key); 
+				dataOut.writeInt(ack.length);
+				dataOut.write(ack);
+			}else{
+				byte[] nack = CryptoUtilities.encrypt("Not Acknowledged".getBytes(), key);
+				dataOut.writeInt(nack.length);
+				dataOut.write(nack);
+			}
+			System.out.println("Sent Verification");
+			System.out.println("-----------------");
+			
+			
+			dataIn.close();
+			dataOut.close();
+			parent.kill(this);
+			sock.close();
+			
+			System.out.println("Close Connection with Client " + idnum);
+			System.out.println();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
     }
 }
