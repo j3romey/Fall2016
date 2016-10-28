@@ -15,6 +15,7 @@ public class ServerThread extends Thread
     private Server parent;  //Reference to Server object for message passing.
     private int idnum;  //The client's id number.
     private SecretKeySpec key;
+    private boolean DEBUG;
 	
     /**
      * Constructor, does the usual stuff.
@@ -22,12 +23,13 @@ public class ServerThread extends Thread
      * @param p Reference to parent thread.
      * @param id ID Number.
      */
-    public ServerThread (Socket s, Server p, int id, String k)
+    public ServerThread (Socket s, Server p, int id, String k, boolean debug_flag)
     {
 	parent = p;
 	sock = s;
 	idnum = id;
 	key = CryptoUtilities.key_from_seed(k.getBytes());
+	DEBUG = debug_flag;
     }
 	
     /**
@@ -88,11 +90,14 @@ public class ServerThread extends Thread
 			
 			// get filename
 			String name = new String(message, "UTF-8");
-			System.out.println("Filename: " + name);
-			
+			if(DEBUG){
+				System.out.println("Filename: " + name);
+			}
 			// get file length
 			length = dataIn.readInt();
-			System.out.println("File size: " + length);
+			if(DEBUG){
+				System.out.println("File size: " + length);
+			}
 			
 			// get encrypted file
 			message = new byte[length];
@@ -101,35 +106,43 @@ public class ServerThread extends Thread
 			}
 			
 			byte[] hashed_plaintext = CryptoUtilities.decrypt(message,key);
-			System.out.println("Recieved File");
-			
+			if(DEBUG){
+				System.out.println("Recieved File");
+			}
 			byte[] plaintext = CryptoUtilities.extract_message(hashed_plaintext);
-			System.out.println("Decrypted File");
+			//System.out.println("Decrypted File");
 			
 			FileOutputStream f_out = new FileOutputStream(name);
 			f_out.write(plaintext);
 			f_out.close();
-			System.out.println("Finished Writing File");
+			//System.out.println("Finished Writing File");
 			
 			if (CryptoUtilities.verify_hash(hashed_plaintext,key)) {
+				
+				if(DEBUG){
+					System.out.println("Send Acknowledgement: File Acknowledged");
+				}
+				
 				byte[] ack = CryptoUtilities.encrypt("Acknowledged".getBytes(), key); 
 				dataOut.writeInt(ack.length);
 				dataOut.write(ack);
 			}else{
+				if(DEBUG){
+					System.out.println("Send Acknowledgement: File Not Acknowledged");
+				}
 				byte[] nack = CryptoUtilities.encrypt("Not Acknowledged".getBytes(), key);
 				dataOut.writeInt(nack.length);
 				dataOut.write(nack);
 			}
-			System.out.println("Sent Verification");
-			System.out.println("-----------------");
+			//System.out.println("Sent Verification");
+			//System.out.println("-----------------");
 			
 			
 			dataIn.close();
 			dataOut.close();
 			parent.kill(this);
 			sock.close();
-			
-			System.out.println("Close Connection with Client " + idnum);
+		
 			System.out.println();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

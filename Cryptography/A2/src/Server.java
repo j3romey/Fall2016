@@ -15,6 +15,9 @@ public class Server
     private Vector <ServerThread> serverthreads;  //holds the active threads
     private boolean shutdown;  //allows clients to shutdown the server
     private int clientcounter;  //id numbers for the clients
+    
+  
+    private static boolean is_debug = false;
 
     Scanner sc = new Scanner(System.in);
     /**
@@ -23,9 +26,16 @@ public class Server
      */
     public static void main (String [] args)
     {
-	if (args.length != 1) {
+	if (args.length < 1) {
 	    System.out.println ("Usage: java Server port#");
 	    return;
+	}
+	
+	if ( args.length >= 2){
+		System.out.println(args[1]);
+		if(args[1].equals("debug")){
+			is_debug = true;
+		}
 	}
 
 	try {
@@ -86,7 +96,7 @@ public class Server
      */
     public void kill (ServerThread st)
     {
-	System.out.println ("Killing Client " + st.getID() + ".");
+	System.out.println ("Closed Connection With Client " + st.getID() + ".");
 		
 	/* Find the thread in the vector and remove it. */
 	for (int i = 0; i < serverthreads.size(); i++) {
@@ -128,6 +138,10 @@ public class Server
      */
     private void listen (String k)
     {
+    if(is_debug){
+    	System.out.println("---SERVER IN DEBUG MODE---");
+    }
+    	
     System.out.println("Server is now Listening...");
 	Socket client = new Socket ();
 	ServerThread st;
@@ -143,7 +157,12 @@ public class Server
 		/* Create a new thread to deal with the client, add it to the vector of open connections.
 		 * Finally, start the thread's execution. Start method makes the threads go by calling their
 		 * run() methods. */
-		st = new ServerThread (client, this, clientcounter++, k);
+		if(!is_debug){
+			st = new ServerThread (client, this, clientcounter++, k, false);
+		}else{
+			st = new ServerThread (client, this, clientcounter++, k, true);
+		}
+		
 		serverthreads.add (st);
 		st.start ();
 	    }
