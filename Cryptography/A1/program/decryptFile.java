@@ -63,6 +63,7 @@ public class decryptFile {
 			
 			if(compareDigest(digest_from_file, digest_from_digest)){
 				System.out.println("MESSAGE AUTHENTICATED, DIGEST ARE A MATCH");
+				System.out.println("FILE SUCESSFULLY DECRYPTED");
 			}else{
 				System.out.println("WARNING MESSAGE UNAUTHENTICATED, DIGEST ARE A MISMATCH");
 			}
@@ -73,7 +74,15 @@ public class decryptFile {
 			file_out.close();
 			
 			
-		} catch (Exception e) {
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			//e.printStackTrace();
+			System.out.println("File Specified Not Found, Please Try Again");
+		
+		} catch (InvalidKeyException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalBlockSizeException e) {
 			// TODO Auto-generated catch block
 			//e.printStackTrace();
 			System.out.println(" ____ ____ ____ ____ ____ ____ ____ ");
@@ -81,8 +90,19 @@ public class decryptFile {
 			System.out.println("||__|||__|||__|||__|||__|||__|||__||");
 			System.out.println("|/__\\|/__\\|/__\\|/__\\|/__\\|/__\\|/__\\|");
 			System.out.println("FILE HAS BEEN TAMPERED WITH OR ERROR IN DECRYPTION");
+		} catch (BadPaddingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchPaddingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		
 		
 	}
 	

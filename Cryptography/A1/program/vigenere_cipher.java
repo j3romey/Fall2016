@@ -1,5 +1,3 @@
-import java.util.Arrays;
-
 public class vigenere_cipher {
 	public static void main(String[] args) {
 		String s = "XOLRV OLNNJ QFPAL FCMEE LNIVA RISKA EEXJG HEHYE DHWLI BPDLS MRPAE " 
@@ -51,7 +49,7 @@ public class vigenere_cipher {
 		
 		for(int i = 0; i < key.length(); i++){
 			System.out.println("Frequency for Index " + i);
-			String frequency = freq(s2, i);
+			freq(s2, i);
 			System.out.println();
 			System.out.println("---------------------------------");
 		}
@@ -69,7 +67,7 @@ public class vigenere_cipher {
 		
 	}
 	
-	static public String freq(String s, int index){
+	static public void freq(String s, int index){
 		int[] alphabet = new int[26];
 		
 		String frequency = "";
@@ -93,6 +91,5 @@ public class vigenere_cipher {
 		
 		System.out.println(frequency);
 		
-		return frequency;
 	}
 }

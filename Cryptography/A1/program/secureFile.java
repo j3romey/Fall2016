@@ -48,8 +48,8 @@ public class secureFile {
 			cipher.init(Cipher.ENCRYPT_MODE, secKey);
 			cipherFile = cipher.doFinal(combined);
 
-			/*
-			System.out.println("Encryption Complete");
+			/* debugging statements
+			
 			System.out.println("File Size: " + file_bytes.length);
 			System.out.println("Digest Size: " + digest_size);
 			System.out.println("Combined Size: " + combined.length);
@@ -61,10 +61,29 @@ public class secureFile {
 			file_out = new FileOutputStream(out_filename);
 			file_out.write(cipherFile);
 			file_out.close();
+			System.out.println("Encryption Complete");
+			System.out.println("SUCESSFULLY ENCRYPTED FILE: " + filename);
 			
-			System.out.println("SUCESSFULLY ENCRYPTED FILE " + filename);
-			
-		} catch (Exception e) {
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			//e.printStackTrace();
+			System.out.println("File Specified Not Found, Please Try Again");
+		} catch (IllegalBlockSizeException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (BadPaddingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchPaddingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvalidKeyException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} 

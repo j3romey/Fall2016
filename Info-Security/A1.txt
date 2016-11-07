@@ -1,0 +1,222 @@
+This file contains the code from "Algorithms in C, Third Edition, Parts 1-4," by Robert Sedgewick, and is covered under the copyright and warranty notices in that book. Permission is granted for this	code to be used for educational purposes in association with the text, and for other uses not covered by copyright laws, provided that the following notice is included with the code:	"This code is from "Algorithms in C, Third Edition," by Robert Sedgewick, Addison Wesley Longman, 1998." Commercial uses of this code require the explicit written permission of the publisher. Send your request for permission, stating clearly what code you would like to use, and in what specific way, to: aw.cse@aw.com. 
+367!*/_DjMUXz02#%&();[\]{}+<=>HIN are the extra characters that will appear later in this document.
+
+
+----------
+CHAPTER 1. Introduction
+-----
+#include <stdio.h>
+#define N 10000
+main()
+  { int i, p, q, t, id[N];
+    for (i = 0; i < N; i++) id[i] = i;
+    while (scanf("%d %d\n", &p, &q) == 2)
+      { 
+        if (id[p] == id[q]) continue;
+        for (t = id[p], i = 0; i < N; i++)
+          if (id[i] == t) id[i] = id[q];
+        printf(" %d %d\n", p, q);
+      }
+ }
+----- 
+    for (i = p; i != id[i]; i = id[i]) ;
+    for (j = q; j != id[j]; j = id[j]) ;
+    if (i == j) continue;
+    id[i] = j;
+    printf(" %d %d\n", p, q);
+-----
+#include <stdio.h>
+#define N 10000
+main()
+  { int i, j, p, q, id[N], sz[N];
+    for (i = 0; i < N; i++) 
+      { id[i] = i; sz[i] = 1; }
+    while (scanf("%d %d\n", &p, &q) == 2)
+      { 
+        for (i = p; i != id[i]; i = id[i]) ;
+        for (j = q; j != id[j]; j = id[j]) ;
+        if (i == j) continue;
+        if (sz[i] < sz[j])
+             { id[i] = j; sz[j] += sz[i]; }
+        else { id[j] = i; sz[i] += sz[j]; }
+        printf(" %d %d\n", p, q);
+      }
+ }
+-----
+    for (i = p; i != id[i]; i = id[i]) 
+      { int t = i; i = id[id[t]]; id[t] = i; } 
+    for (j = q; j != id[j]; j = id[j]) ;
+      { int t = j; j = id[id[t]]; id[t] = j; } 
+
+----------
+CHAPTER 2. Principles of Algorithm Analysis
+-----
+int search(int a[], int v, int l, int r)
+  { int i;
+    for (i = l; i <= r; i++)
+      if (v == a[i]) return i;
+    return -1;
+  }
+-----
+int search(int a[], int v, int l, int r)
+  { 
+    while (r >= l)
+      { int m = (l+r)/2;
+        if (v == a[m]) return m;
+        if (v < a[m]) r = m-1; else l = m+1;
+      }
+    return -1;
+  }
+
+----------
+CHAPTER 3. Elementary Data Structures
+-----
+#include <stdio.h>
+int lg(int);
+main()
+  { int i, N; 
+    for (i = 1, N = 10; i <= 6; i++, N *= 10)
+      printf("%7d %2d %9d\n", N, lg(N), N*lg(N));
+  }
+int lg(int N)
+  {  int i;
+     for (i = 0; N > 0; i++, N /= 2) ;
+     return i;    
+  }
+-----
+#include <stdlib.h>
+typedef int numType;
+numType randNum()
+  { return rand(); }
+main(int argc, char *argv[])
+  { int i, N = atoi(argv[1]);
+    float m1 = 0.0, m2 = 0.0;
+    numType x;
+    for (i = 0; i < N; i++)
+      {
+        x = randNum();
+        m1 += ((float) x)/N; 
+        m2 += ((float) x*x)/N;
+      }
+    printf("       Average: %f\n", m1);
+    printf("Std. deviation: %f\n", sqrt(m2-m1*m1));
+ }
+
+  { int i, N = atoi(argv[1]), M = atoi(argv[2]); 
+    link t = malloc(sizeof *t), x = t;
+    t->item = 1; t->next = t;
+    for (i = 2; i <= N; i++)
+      { 
+        x = (x->next = malloc(sizeof *x));
+        x->item = i; x->next = t;
+      }
+    while (x != x->next)
+      {
+        for (i = 1; i < M; i++) x = x->next;
+        x->next = x->next->next; N--;
+      }
+    printf("%d\n", x->item);
+  }
+-----
+link reverse(link x)
+  { link t, y = x, r = NULL;
+    while (y != NULL)
+      { t = y->next; y->next = r; r = y; y = t; }    
+    return r;
+  }
+-----
+    struct node heada, headb;
+    link t, u, x, a = &heada, b;
+    for (i = 0, t = a; i < N; i++)
+      {
+        t->next = malloc(sizeof *t); 
+        t = t->next; t->next = NULL;
+        t->item = rand() % 1000; 
+      }
+    b = &headb; b->next = NULL;
+    for (t = a->next; t != NULL; t = u)
+      {
+        u = t->next;
+        for (x = b; x->next != NULL; x = x->next)
+          if (x->next->item > t->item) break;
+        t->next = x->next; x->next = t; 
+      }
+-----
+typedef struct node* link;
+struct node { itemType item; link next; };
+typedef link Node;
+void initNodes(int);
+link newNode(int);
+void freeNode(link);
+void insertNext(link, link);
+link deleteNext(link);
+link Next(link);
+ int Item(link);
+-----
+#include "list.h"
+main(int argc, char *argv[])
+  { int i, N = atoi(argv[1]), M = atoi(argv[2]); 
+    Node t, x;
+    initNodes(N); 
+    for (i = 2, x = newNode(1); i <= N; i++)
+      { t = newNode(i); insertNext(x, t); x = t; }
+    while (x != Next(x))
+      {
+        for (i = 1; i < M; i++) x = Next(x);
+        freeNode(deleteNext(x)); 
+      }
+    printf("%d\n", Item(x));
+  }
+-----
+#include <stdlib.h>
+#include "list.h"
+link freelist;
+void initNodes(int N)
+  { int i;
+    freelist = malloc((N+1)*(sizeof *freelist));
+    for (i = 0; i < N+1; i++)
+      freelist[i].next = &freelist[i+1];
+    freelist[N].next = NULL;
+  }    
+link newNode(int i)
+  { link x = deleteNext(freelist); 
+    x->item = i; x->next = x;
+    return x;
+  }
+void freeNode(link x)
+  { insertNext(freelist, x); }
+void insertNext(link x, link t)
+  { t->next = x->next; x->next = t; }
+link deleteNext(link x)
+  { link t = x->next; x->next = t->next; return t; }
+link Next(link x)
+  { return x->next; }
+int Item(link x)
+  { return x->item; }
+-----
+main(int argc, char *argv[])
+  { long int i, j, N = atoi(argv[1]);
+    int *a = malloc(N*sizeof(int));
+    if (a == NULL) 
+      { printf("Insufficient memory.\n"); return; }
+    ...
+-----
+#include <stdlib.h>
+int heads()
+  { return rand() < RAND_MAX/2; }
+main(int argc, char *argv[])
+  { int i, j, cnt;
+    int N = atoi(argv[1]), M = atoi(argv[2]);
+    int *f = malloc((N+1)*sizeof(int));
+    for (j = 0; j <= N; j++) f[j] = 0;
+    for (i = 0; i < M; i++, f[cnt]++)
+      for (cnt = 0, j = 0; j <= N; j++) 
+        if (heads()) cnt++;
+    for (j = 0; j <= N; j++) 
+      {
+        printf("%2d ", j);
+        for (i = 0; i < f[j]; i+=10) printf("*");
+        printf("\n");
+      }
+ }
+-----
