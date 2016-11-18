@@ -48,11 +48,17 @@ public class Client
     
     public void createSophieGermain(){
     	Random rnd= new Random();
-		
+    	System.out.println("*added so you know it didn't freeze*");
+		System.out.print("Generating Sophie Germain");
+		int i = 0;
 		do{
-			Q = new BigInteger(512, 3, rnd);
+			Q = new BigInteger(1023, 3, rnd);
 			P = Q.multiply(BigInteger.valueOf(2)).add(BigInteger.valueOf(1));
+			if(i % 25 == 0){
+				System.out.print(".");
+			}
 		}while(!P.isProbablePrime(3));
+		System.out.println();
     }
     
     public void createPrimRoot(){
@@ -68,9 +74,9 @@ public class Client
     	CryptoUtilities.sendPublicKey(publicKey.toByteArray(), out);
     }
     
-    public void sendPQ() throws IOException{
+    public void sendPG() throws IOException{
     	CryptoUtilities.sendPublicKey(P.toByteArray(), out);
-    	CryptoUtilities.sendPublicKey(Q.toByteArray(), out);
+    	CryptoUtilities.sendPublicKey(G.toByteArray(), out);
     }
 
     // GET
@@ -332,21 +338,29 @@ public class Client
     	}
 
     	// GENERATE DIFFIE HELLMAN
-    	c.createPrivateKey();
     	c.createSophieGermain();
+    	c.debug("create Sophie Germain Primes");
+    	
     	c.createPrimRoot();
+    	c.debug("create G");
+    	c.createPrivateKey();
+    	c.debug("create Client privatekey");
     	c.createPublicKey();
+    	c.debug("create Client publickey");
     	
     	try {
-			c.sendPQ();
+			c.sendPG();
+			c.debug("Sending P & G to Server");
 			c.sendPublicKey();
+			c.debug("Sending Publickey to Server");
 			c.getPublicKey();
+			c.debug("Recieve Server's Publickey");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
     	c.createDHKey();
-    	
+    	c.debug("Create Sharedkey from Server Publickey");
     	// get the encryption key
     	c.key = CryptoUtilities.key_from_seed(c.DHKey.toByteArray());
 

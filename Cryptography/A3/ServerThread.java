@@ -106,9 +106,9 @@ public class ServerThread extends Thread
     	sharedKey = CryptoUtilities.recievePublicKey(in);
     }
     
-    public void getPQ() throws IOException{
+    public void getPG() throws IOException{
     	P = CryptoUtilities.recievePublicKey(in);
-    	Q = CryptoUtilities.recievePublicKey(in);
+    	G = CryptoUtilities.recievePublicKey(in);
     }
     
     // SEND 
@@ -307,25 +307,31 @@ public class ServerThread extends Thread
 	
 		
 		// GENERATE DIFFIE HELLMAN
-		createPrivateKey(); 
+		
 		
 		try {
-			getPQ();
+			getPG();
+			debug("recieve P & G from Client");
 			getPublicKey();
+			debug("recieve Publickey from Client");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
-		createPrimRoot();
+		createPrivateKey();
+		debug("generate Server Privatekey");
+		//createPrimRoot();
 		createPublicKey();
+		debug("generate Server Publickey");
 		
 		try {
 			sendPublicKey();
+			debug("Send Publickey to Client");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		
 		createDHKey();
+		debug("Create Sharedkey from Client Publickey");
 		
 		// get the encryption key
 		key = CryptoUtilities.key_from_seed(DHKey.toByteArray());

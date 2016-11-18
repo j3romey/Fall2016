@@ -43,8 +43,26 @@ File Protocol Messages(Filename, Filesize and File):
 
 --Diffie Hellman--
     Client:
-    - the Client calculates P and Q values 
-    - the Client creates a privatekey which is a number between 0 and P-2
+    - calculates P and Q values
+    - calculates G from (P & Q)
+    - creates a privatekey value from 0 to (P-2)
+    - creates publickey = G^privatekey (mod P)
+
+    - sends P and G to server 
+    - send publickey to Server
+    - recieves Server's publickey
+
+    - creates a shared key by raising the Server's public key to the Client's privatekey
     
 
     Server: 
+    - recieve P and G from the Client
+    - get the Client's publickey
+    - creates a privatekey value from 0 to (P-2)
+    - creates publickey = G^privatekey (mod P)
+    - send publickey to Client
+
+     - creates a shared key by raising the Client's public key to the Server's privatekey
+    
+
+
