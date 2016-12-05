@@ -1,20 +1,22 @@
 \documentclass{assignment}
 
 \usepackage{enumitem}
-\usepackage{xfrac}% http://ctan.org/pkg/xfrac
-\usepackage[fleqn]{amsmath}
-\newcommand*{\xdash}[1][3em]{\rule[0.5ex]{#1}{0.55pt}}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{enumitem}
+\usepackage[normalem]{ulem}
 
+\title{CPSC 418 Assignment 3}
 \coursetitle{Introduction to Cryptography}
 \courselabel{CPSC 418}
-\exercisesheet{Home Work \#[number]}{}
-\student{Arnel Jerome Adviento - 10130641}
+\exercisesheet{Home Work \#3}{}
+\student{Arnel Adviento - 10130641}
 \semester{Fall 2016}
 %\usepackage[pdftex]{graphicx}
 %\usepackage{subfigure}
+\usepackage{amsmath}
 
 \begin{document}
-
 
 \begin{center}
 \renewcommand{\arraystretch}{2}
@@ -32,198 +34,222 @@ Total & \\ \hline
 \end{center}
 
 \bigskip
+
 \clearpage
 
 \begin{problemlist}
-\pbitem (A substitution cipher cryptanalysis, 10 marks plus 1 bonus mark)
-\begin{problem}
-	\begin{answer}
-		\begin{enumerate}[label=(\alph*)]
-		\item Letter Frequency: \\
-		\begin{tabular}{ l l l l l l l }
-  			A: 45 & B: 2 & C: 46 & D: 19 & E: 26 & F: 30 & G: 13\\
-  			H: 4 & I: 55 & J: 71 & K: 28 & L: 18 & M: 7 & N: 30\\
-  			O: 84 & P: 56 & Q: 16 & R: 58 & S: 15 & T: 56 & U: 56\\
-  			V: 8 & W: 1 & X: 135 & Y: 2 & Z: 23
-		\end{tabular}
-		\\
-		\item Plain Text: \\
-		Case was twenty-four. At twenty-two, he'd been a cowboy, a rustler, one of the best in the Sprawl. He'd been trained by the best, by McCoy Pauley and Bobby Quine, legends in the biz. He'd operated on an almost permanent adrenaline high, a byproduct of youth and proficiency, jacked into a custom cyberspace deck hat projected his disembodied consciousness into the consensual hallucination that was the matrix. A thief, he'd worked for other, wealthier thieves, employers who provided the exotic software required to penetrate the bright walls of corporate systems, opening windows into rich fields of data.
 
-He's made the classic mistake, the one he's sworn he'd never make. He stole from his employers. He kept something for himself and tried to move it through a fence in Amsterdam. He still wasn't sure how he'd been discovered, not that it mattered now. He'd expected to die, then but they only smiled. Of course he was welcome, they told him, welcome to the money. And he was going to need it. Because--still smiling--they were going to make sure he never worked again.
-
-They damaged his nervous system with a wartime Russian mycotoxin. \\
-	
-		\item William Gibson 
-
-		\end{enumerate}
-		
-	\end{answer}
-\end{problem}
-
-\pbitem (Superencipherment for substitution ciphers, 12 marks)
+\pbitem (Flawed hash function based MAC designs, 28 marks)
 \begin{problem}
 \begin{answer}
+
 \begin{enumerate}[label=(\alph*)]
-	\item	\begin{enumerate}[label=(\roman*)]
-			\item Let $ E_k(M) = M + K (mod \hspace{.5em} 26) $ be the shift cipher and $M$ represents the plain text 
-				  and $K$ the key to shift each letters by. \\
-				  Let there be keys $K_1$ and $K_2$. \\
-				  \\
-				  We use $K_1$ to encrypt $M$ in a shift cipher $E_{k1}(M) =  M + K_{k1} (mod \hspace{.5em} 26) $ \\
-				  Then we apply another shift cipher of key $K_2$ on $E_{k1}(M)$ resulting in $E_{k2}(E_{k1}(M)) = (M + K_{1} (mod \hspace{.5em} 26)) + K_{2} (mod \hspace{.5em} 26) $ \\
-				  We can simplify it to $M + ((K_{1} + K_{2}) (mod \hspace{.5em} 26)) $ \\
-				  Where we let $(K_1 + K_2)$ be another key $K_3$. \\
-				  Therefore we proved that doing the shift cipher twice just results in another shift cipher with a key of $(K_1 + K_2)=K_3$. \\
-
-			
-\clearpage				  
-				
-			\item Let $ E_k(M) = M + K (mod \hspace{.5em} 26) $ be the shift cipher and $M$ represents the plain text 
-				  and $K$ represent the key to shift each letters by. \\
-				base case (K = 0): 
-				\begin{align*}
-					E_{k0}(M) &= M + K_0  (mod \hspace{.5em} 26) \\
-					E_{k0}(M) &= M + 0
-				\end{align*}
-				
-				base case (K = 1): 
-				\begin{align*}
-					E_{k1}(M) &= M + K_1  (mod \hspace{.5em} 26) \\
-					E_{k1}(M) &= M + 1
-				\end{align*}
-
-				
-				Assume there is a K, greater than or equal to 1, such that \\ $ E_{k1}(M) = M + (K_1) (mod \hspace{.5em} 26) $.\\ 
-				Now we want to prove that $ E_{k1+1}(M) = M + (K_1+1) (mod \hspace{.5em} 26) $  also holds true. \\
-				Inductive Step:
-				\begin{align*}
-					E_{k1+1}(M) &= M + (K_1+1)  (mod \hspace{.5em} 26) \\
-					E_{k1+1}(M) &= M + (K_1 (mod \hspace{.5em} 26) ) + (1 (mod \hspace{.5em} 26) ) \\
-					E_{k1+1}(M) &= ( M + K_1 (mod \hspace{.5em} 26) ) + (1 (mod \hspace{.5em} 26) ) \\
-					E_{k1+1}(M) &= E_{k1}(M) + (1 (mod \hspace{.5em} 26) ) \\
-					E_{k1+1}(M) &= E_{k1}(M) + 1
-				\end{align*}
-				Therefore by induction the key of multiple encipherment with shift cipher results in another shift cipher where the new key is just the sum of all the keys used previously.
-			\end{enumerate}
-
-
-	\item 	\begin{enumerate}[label=(\roman*)]
-			\item yes, the new keyword of using the keyword $WORD$  and $CIPHER$ \\ is $YWGKAFTLLVVU$\\
-			This key is created by adding each corresponding letter of the two keywords based on their index and repeating each keyword 
-			if necessary until both keywords are an equal length. \\
-		
-			
-			W\,O\,R\,D\,W\,O\,R\,D\,W\,O\,R\,D \\
-			C\enspace I\enspace P\;H\;E\enspace R C I P\:H\;E\;R \\
-			\xdash[12em] \\ 
-			Y\,W\,G\,K\,A\enspace F\enspace T\,L\,L\,V\,V\,U
-			
-			
-
-
-			\item Yes, to obtain the corresponding key word you add each letter of $m_1$ to each corresponding character to $m_2$ based on its index in the alphabet $(0 ... 25) $ and modulo it by 26. \\
-			\textit{eg:} $m_1.charAt(0) = T$ and $m_2.charAt(0) = I$. Since $I$ is at index $9$ we shift that many letters from $T$ and since we modulo it by 26 the combined vigenere cipher of characters $T$ and $I$ is $B$.
-			As for the length of the new key word, it will be the least common multiple length that $m_1$ and $m_2$ share
-			\end{enumerate}
+	\item \begin{enumerate}
+    		\item We know
+            	  \begin{align*}
+    				M_1 \\
+                    MAC_1 &= H(K||M_1') \\
+                    M_2 &= M_1' || X 
+  			 	  \end{align*}
+                  We want to get
+                  \begin{align*}
+                  	MAC_2 &= H(K||M_2) \\
+                    	  &= H(K||M_1'||X) 
+                  \end{align*}
+                  without knowing $K$
+           		  \begin{align*}
+                  	MAC_2 &= f( H(K||M_1')||X) \\
+                    	  &= f(MAC_1 ||X)
+                  \end{align*}
+                  By doing this we showed we can compute the PHMAC of $M_2$ without know $K$ therefore defeating computation resistance. \\
+            \item Since we know $H$ is not weakly collision resistance. There exists:
+            	  \begin{align*}
+            		M_1 &\neq M_2 \\
+                    MAC_1 &= MAC_2
+            	  \end{align*}
+                  To generate a pair $(M_2, MAC_2)$ first we just pick an arbitrary message $M_2$. \\
+                  We know that $MAC_2 = H(M_2'||K)$ even if we don't know $K$, since it is not weakly collision 				  resistant, we can find X which you append at the end of $M_2$ which will generate $MAC_2$ \\
+		  \end{enumerate} 
+  	\item \begin{enumerate}
+    		\item we know
+            	  \begin{align*}
+                  	M_1 \\
+            	  	MAC_1 &= E_K(M_1) \\
+                    M_2 &= MAC_1 \\
+                    MAC_2 &= E_K(M_2) \\ 
+                    	  &= E_K(MAC_1) 
+            	  \end{align*}
+                  we want to know $MAC_3$ given a two-block message $M_3 = M_1||0^n$
+                  \begin{align*}
+                  	MAC_3 &= E_K(M_3) \\ 
+                    	  %&= E_K(M_1||0^n) \\
+                      C_1 &= E_K(M_1) \\
+                      C_2 &= E_K(0^n \oplus E_K(M_1)) \\
+                      	  &= E_K(E_K(M_1))\\
+                          &= E_K(MAC_1) \\
+                    MAC_3 &= MAC_2 \\ \\
+					 M_3 &\neq M_2 \\ 
+                     MAC_3 &= MAC_2 \\
+                  \end{align*}
+                  This violates computation resistance since it is not weakly collision resistance since there exists $MAC_3 = MAC_2$ but $M_3 \neq M_2$. \\
+            \item we know
+            	  \begin{align*}
+            	  	M_1 \\
+            	  	MAC_1 &= E_K(M_1) \\
+                    M_2 \\
+                    MAC_2 &= E_K(M_2) \\
+                    M_3 &= M_1||X \\
+                    MAC_3 &= E_K(M_3) \\
+                    	  %&= E_K(M_1||X) \\
+                      C_1 &= E_K(M_1) \\
+                      C_2 &= E_K(X \oplus (E_K(M_1))) \\
+                    MAC_3 &= E_K(X \oplus MAC_1) 
+            	  \end{align*}
+                  we want to know $MAC_4$ given a two-block message\\
+                  $M_4 = M_2||(MAC_1 \oplus X \oplus MAC_2)$
+                  \begin{align*}
+                  	MAC_4 &= E_K(M_4)\\
+                    	  &= E_K(M_2 ||(MAC_1 \oplus X \oplus MAC_2) \\
+                      C_1 &= E_K(M_2) \\
+                      C_2 &= E_K(MAC_1 \oplus X \oplus MAC_2 \oplus E_K(M_2) ) \\
+                          &= E_K(MAC_1 \oplus X \oplus MAC_2 \oplus MAC_2 ) \\
+                          &= E_K(MAC_1 \oplus X) \\ \\
+                      M_4 &\neq M_3 \\
+                      MAC_4 &= MAC_3 
+                  \end{align*}
+                  This violates computation resistance since it is not weakly collision resistance since there exists $MAC_4 = MAC_3$ but $M_4 \neq M_3$.
+		  \end{enumerate}
 \end{enumerate}
+
 \end{answer}
 \end{problem}
 
 \clearpage
-
-\pbitem (Equiprobability maximizes entropy for two outcomes, 12 marks)
+\pbitem (A modified man-in-the-middle attack on Die-Hellman, 12 marks)
 \begin{problem}
 \begin{answer}
+
 \begin{enumerate}[label=(\alph*)]
-	\item	Let $ p(X_1) = \frac{1}{4} $ and let $ p(X_2) = \frac{3}{4} $	\\
-			$H(X) = -p \ log_2(p) -(1-p) \ log_2(1-p) $ \\
-			$H(X) = -\frac{1}{4} \ log_2(\frac{1}{4}) -\frac{3}{4} \ log_2(\frac{3}{4}) $ \\
-			$H(X) = 0.5 + 0.311278...$ \\
-			$H(X) = 0.811278.. $
-			
-	\item 	To prove that $H(X)$ is maximal, when both outcomes are equally likely. \\
-			we take the derivative of  $H(X) = -p \log_2 (p) - (1-p) \log_2 (1-p)$, where $p$ is the probability 
-			outcome such that $p + (1-p) = 1$. \\
-			\begin{align*}
-					H(X) &= -p \log_2 (p) - (1\!-\!p) \log_2 (1\!-\!p)\\
-					H'(X) &= [  - \log_2(p)   + p \frac{1}{ p\ln(2)}] - [ (-1) log_2(1-p) + (1\!-\!p) \frac{1}{ (1-p)\ln(2)}  ]\\
-					H'(X) &=  - \log_2(p) - \frac{1}{ \ln(2)}  + log_2(1-p) +  \frac{1}{ \ln(2)}  \\ 
-					H'(X) &=  - \log_2(p) + log_2(1-p) \\ 
-					H'(X) &=  log_2(1-p) - \log_2(p) \\ 
-			\end{align*}
-			Now we set H'(X) = 0 and solve for $p$ to find the maximum value for H(X) \\
-			\begin{align*}
-					H'(X) &=  log_2(1-p) - \log_2(p) \\ 
-					0 &=  log_2(1-p) - \log_2(p) \\ 
-					0 &=  (1-p) - p \\
-					p & = 1 - p \\
-					2p &= 1 \\
-					p &= \frac{1}{2} 
-			\end{align*}			
-	\item 	The maximal value of $H(X)$ is 1, when $p(X_1) = \frac{1}{2}$ and $p(X_2) = \frac{1}{2}$
+	\item Bob receives $(g^a)^q$ from Mallory and computes $((g^a)^q)^b$ \\
+    	  Alice receives  $(g^b)^q$ from Mallory and computes $((g^b)^q)^a$ \\ \\
+          $((g^a)^q)^b \mod p = g^{aqb} \mod p = q^{bqa} \mod p = ((g^b)^q)^a \mod p$ \\ 
+          based on exponent power rules
+	\item We know that $g$ is a primitive root of $P$ and its smallest positive exponent is $k$ with $g^k \equiv 1$ (mod p) where $k = (p-1)$. We also know the equation $p = mq + 1$\\ \\
+    So when Mallory raises $g$ to the power of $q$ this happens.
+    	  \begin{align*}
+          	g^q &= g^{(p-1) / m} (\bmod p)\\
+            	&= g^{k/m} (\bmod p)
+		  \end{align*}
+    So we know that if we have $g$ has a key-space of $k$ and when we raise a power to $g$ for example $g^2$ we half the key-space, essentially getting $k/2$. So when we raise $g$ to the power of $q$ we get $g^q = g^{k/m}$, which mean we divide our key-space by $(k/m)$ which is $\frac{k}{(k/m)} = k \times \frac{m}{k} = m$ and we get a a new key-space of sized $m$.
+	\item The man-in-the-middle attack discussed in class generates two different keys where Bob computes the key $(g^e)^b$ and Alice computes $(g^e)^a$. If Alice and Bob were to exchange the keys they computed they would notice that they would be different and will know that their keys have been tampered with. In this variation, we showed in part (a) that both Alice and Bob computed the same key and if they were to exchange those keys they would not notice the attack.   
 \end{enumerate}
+
+\end{answer}
+\end{problem}
+
+
+\pbitem (Binary exponentiation, 12 marks)
+\begin{problem}
+\begin{answer}
+
+\begin{enumerate}[label=(\alph*)]
+	\item Base Case (i = 0):
+    	\begin{align*}
+        	s_i &= \sum_{j=0}^i b_j 2^{i-j} \\
+    		s_0 &= \sum_{j=0}^0 b_j 2^{0-j} \\
+            	&= b_0 2^{0-0} \\
+                &= b_0 \cdot 1 \\
+            s_0 &= b_0
+    	\end{align*}
+        Inductive Hypothesis: \\
+        Suppose $ s_i = \sum_{j=0}^i b_j 2^{i-j} $ we want to prove  $ s_{i+1} = 2s_i + b_{i+1} $
+        \begin{align*}
+        	s_{i+1} &= 2s_i + b_{i+1} \\
+            		&= 2 (\sum_{j=0}^i b_j 2^{i-j}) + b_{i+1} \\
+                    &= \sum_{j=0}^i b_j 2^{i-j+1} + b_{i+1} \\
+                    &= (b_0 2^{i+1} + b_1 2^1 + b_2 2^{i-1} \ldots b_j 2^1) + b_{i+1} \\
+                    &= (b_0 2^{i+1} + b_1 2^1 + b_2 2^{i-1} \ldots b_j 2^1) + b_{i+1} 2^0 \\
+                    &= \sum_{j=0}^{(i+1)} b_j 2^{(i+1)-j}
+        \end{align*}
+	\item Base Case (i=0)
+     	  \begin{align*}
+     	  	r_i &\equiv a^{s_i} (\text{mod m}) \\
+            r_0 &\equiv a^{s_0} (\text{mod m}) \\
+            	&\equiv a^{b_0} (\text{mod m}) \\
+                &\equiv a^1 (\text{mod m}) 
+     	  \end{align*}
+          Inductive Hypothesis: \\
+          Suppose $ r_i \equiv a^{s_i} (\text{mod m})$ we want to prove  $ r_{i+1} = r_i^2 (\text{mod m})$ and $ r_{i+1} = r_i^2 a (\text{mod m})$ \newline \newline
+          Case: $b_{i+1} = 0$
+          \begin{align*}
+          	r_{i+1} &\equiv r_i^2 (\text{mod m}) \\
+            		&\equiv (a^{s_i})^2 (\text{mod m}) \\
+                    &\equiv (a^{2s_i}) (\text{mod m})
+          \end{align*}
+          Case: $b_{i+1} = 1$
+          \begin{align*}
+          	r_{i+1} &\equiv r_i^2 a (\text{mod m}) \\
+            		&\equiv (a^{s_i})^2 a (\text{mod m}) \\
+                    &\equiv a^{(2s_i)} a (\text{mod m}) \\
+                    &\equiv a^{(2s_i+1)} (\text{mod m})
+          \end{align*}
+	\item Since in part b) we proved that $r_i \equiv a^{s_i} (\bmod m)$ for $0 \leq i \leq k$ and in part a) we proved $s_i$ hold since we proved $s_{i+1}$ hold as well. Therefore $r_i \equiv a^{s_i} (\bmod m)$ does compute  $a^n (\bmod m)$ where the answer is $r_k (\bmod m)$.
+\end{enumerate}
+
 \end{answer}
 \end{problem}
 
 \clearpage
-
-\pbitem (Key size versus password size, 21 marks)
+\pbitem (An RSA toy example for practicing binary exponentiation, 12 marks) \par Consider the RSA encryption scheme with public key (e, n) = (11, 77).
 \begin{problem}
 \begin{answer}
+
+
 \begin{enumerate}[label=(\alph*)]
-	\item	There are 128 possible characters in the ASCII encoding, and we have a space of 8 characters, therefore that gives us $128^8 = 
-7.205759 \times 10^{16}$
-	\item 	\begin{enumerate}[label=(\roman*)]
-			\item Since there are, $94$ allowed ASCII characters and the ength of the password is exactly $8$. That means at each character slot there are $94$ differently possibilities.\\
-			Therefore we get the equation:\\
-				$94^8$  = $6095689385410816$ \\
-				total permissible passwords = $6.1$ x $10^{15}$ 
-			
-			\item $\frac{94^8}{128^8} = 0.084594... $ 
-				  roughly about 8.5\% of all ASCII are usable for passwords
-			\end{enumerate}
-	\item The entropy of a 8 character length password with 94 usable characters is: 
-		\begin{align*}
-		H(X) &= \log_2(94^8) \\  
-		H(X) &= 2.436710
-		\end{align*}
-		
-	\item  The entropy of a 8 character length password with 26 usable characters is: 
-		\begin{align*}
-		H(X) &= \log_2(26^8) \\  
-		H(X) &= 37.603517
-		\end{align*}
-	\item 	\begin{enumerate}[label=(\roman*)]
-			\item     \begin{align*}
-					94^x &= 2^{128}  \\
-				 	\ln(94^x) &= ln(2^{128}) \\
-				  	x \: ln(94) &= 128 \: ln(2) \\
-				  	x &= \frac{128 \: ln(2)}{ln(94)} \\
-				  	x &= 19.5283034 \\
-				  	x &\approx 20 \\
-				  \end{align*}
-				  	We need about a 20 characted length password to get an entropy of 128 given 94 usable characters
-			\item 	\begin{align*}
-						26^x &= 2^{128}
-						\ln(26^x) &= ln(2^{128}) \\
-				  		x \: ln(26) &= 128 \: ln(2) \\
-				  		x &= \frac{128 \: ln(2)}{ln(26)} \\
-				  		x &= 27.2314948 \\
-				  		x &\approx 28 \\
-					\end{align*}
-					We need about a 28 characted length password to get an entropy of 128 given 26 usable characters
-			\end{enumerate}
+	\item \begin{align*}
+			C &\equiv M^{e} \: (\text{mod n}) \\
+            C &\equiv 17^{11} \: (\text{mod 77}) \\ \\
+            17^{1} &= 17 \mod 77 \\
+            17^{2} &= 58 \mod 77 \\
+            17^{4} &= (17^2)^2 = 58^2 = 53 \mod 77 \\
+            17^{8} &= (17^4)^2 = 53^2 = 37 \mod 77 \\ \\
+            17^{11} &= 17^8 \cdot 17^2 \cdot 17^1 \\ 
+            		&= 37 \cdot 58 \cdot 17 \\
+                    &= 37 \cdot 58 \cdot 17 \\
+                    &= 67 \cdot 17 \\
+                    &= 61
+		  \end{align*}
+	\item \begin{align*}
+			pq &= n \\
+            pq &= 77 \\
+            11 \times 7 &= 77 \\ \\
+            de &\equiv 1 (\text{mod $\phi n$}) \\
+            \phi n &= (p-1)(q-1) \\
+            &= 10 \times 6 \\
+            &= 60 \\ \\
+            \text{Extended Euclidean} \\
+            60 &= 5 \cdot 11 + 5 \\
+            11 &= 2 \cdot 5 + 1 \\ \\
+            1 &= 11 - 2 \cdot 5 \\
+            &= 11 - 2 (60 \times (5 \cdot 11)) \\
+            &= 11 - (2 \cdot 60) + (10 \cdot 11) \\
+            &= 11(11) - (2)(60) \\
+         	d &= 11 \\ \\
+            de &\equiv 1 (\text{mod $\phi n$}) \\
+            11 \cdot 11 &\equiv 1 (\text{mod 60}) 
+		  \end{align*}
+	\item \begin{align*}
+			M &\equiv C^d \: (\text{mod n}) \\
+            &\equiv 32^{11}  (\text{mod 77}) \\
+            \text{binary of 11} &= 1011 \\
+            %&\equiv 65
+            r_0 &= 32 \: \text{mod 77} \\ 
+            r_1 &= 32^2 \: \text{mod 77} = 23 \: \text{mod 77} \\
+            r_2 &= 23^2 \cdot 32  \: \text{mod 77} = 65 \: \text{mod 77} \\
+            r_3 &= 65^2 \cdot 32  \: \text{mod 77} = 65 \: \text{mod 77} \\
+            M &= 65
+		  \end{align*}
 \end{enumerate}
-\end{answer}
-\end{problem}
-\setcounter{enumi}{6}
-\pbitem  (BONUS: Vigenere cipher cryptanalysis, 10 bonus marks)
-
-The first step is solving this problem is to apply frequencly analysis. But since it is a Vigenere cipher which is a polyalphabetic cipher, we need to apply letter frequency analysis at each of the character depending on length of the key, given in this case which is a length of 6. Therefore in my code I created a method to read the encrypted text and output the frequency at each index of the key. For example if wanted to know the letter frequency at the first character of the key, i would only print out the letters from the crypted text such that the index of the letter in the crypted text modded by 6 is equal to 0. I therefore repeated this step a total of 6 times, displaying the letter frequency for each case in my program. After checking the frequency I created an algorithm to decrypt the code given a key by subtracting the value of the crypted letter to its corresponding letter in the key, if the value is less than 0 i would subtract starting from Z and if its greater than 0 i would add starting at A. Once i had this algorith I initially set the key to "AAAAAA" which would keep the enciphered text as is and i would replace each appropriate "A" to the appropriate key based on the letter frequency. For example for every 6th characted in the encyphered text if the most frequent letter was "Q" i would assume its an "E" in plain text then on the Vigenere tableu I would look for "E" on the left hand column and search across is until i find "Q" and find the corresponding key letter in the top column which is "Q". This is not always true as my first pass did not yield me the appropriate key. Although the key was not initially correct I was able to see portions of fimiliar words in the semi-decrypted text and I was able to find the appropriate letters which led to the appropriate key "LAUNCH" 
-
-\begin{problem}
-\begin{answer}
 
 \end{answer}
 \end{problem}
