@@ -1,6 +1,8 @@
 import java.io.*;
 import java.math.*;
 import java.security.*;
+import java.util.Arrays;
+
 import javax.crypto.*;
 import javax.crypto.spec.*;
 
@@ -15,10 +17,15 @@ public class RSATool {
 	private final static int K = 128; // size of RSA modulus in bytes
 	private final static int K0 = 16; // K0 in bytes
 	private final static int K1 = 16; // K1 in bytes
+	
+	// message length = K - k0 - k1
+	
+	private final static int bitLen = 1536;
+	private final static int certainty = 3;
 
 	// RSA key data
 	private BigInteger n;
-	private BigInteger e, d, p, q;
+	private BigInteger e, d, p, q, phiN;
 
 	// TODO: add whatever additional variables that are required to implement
 	// Chinese Remainder decryption as described in Problem 2
@@ -103,11 +110,22 @@ public class RSATool {
 		debug = setDebug;
 
 		rnd = new SecureRandom();
-
-		// TODO: include key generation implementation here (remove init of d)
-		d = BigInteger.ONE;
-		n = BigInteger.ONE;
-		e = BigInteger.ONE;
+		
+		p = new BigInteger(bitLen, certainty, rnd);
+		
+		
+		
+		do{
+			q = new BigInteger(bitLen, certainty, rnd);
+		}while(q.subtract(p).compareTo(BigInteger.valueOf((long) Math.pow(2, 16))) == 1);
+		
+		n = p.multiply(q);
+		System.out.println("length of N :" + n.bitLength());
+		phiN = (p.subtract(BigInteger.ONE)).multiply(q.subtract(BigInteger.ONE));
+		
+		e = BigInteger.valueOf(65537);
+		
+		d = e.modInverse(phiN);
 	}
 
 	/**
@@ -151,14 +169,70 @@ public class RSATool {
 	 */
 	public byte[] encrypt(byte[] plaintext) {
 		debug("In RSA encrypt");
-
+		debug("plaintext length: " + plaintext.length);
 		// make sure plaintext fits into one block
 		if (plaintext.length > K - K0 - K1)
 			throw new IllegalArgumentException("plaintext longer than one block");
 
+		// regular RSA
+		
+		BigInteger M = new BigInteger(plaintext);
+		
+		BigInteger C = M.modPow(e, n);
+		
+		return C.toByteArray();
+		
 		// TODO: implement RSA-OAEP encryption here (replace following return
 		// statement)
-		return plaintext;
+		
+		/*BigInteger ST = BigInteger.ZERO;
+		
+		do{
+		// step 1
+		byte[] r = new byte[K0];
+		rnd.nextBytes(r);
+		
+		
+		// step 2
+		byte[] Gr = G(r);
+		
+		byte[] app = new byte[K1];
+		byte[] M_app = new byte[plaintext.length + K1];
+		System.arraycopy(plaintext, 0, M_app, 0, plaintext.length);
+		System.arraycopy(app, 0, M_app, plaintext.length, app.length);
+		
+		
+		debug("G(r) length: " + Gr.length);
+		debug("M_app length: " + M_app.length);
+		
+		BigInteger S = new BigInteger(M_app).xor(new BigInteger(Gr));
+		byte[] s = S.toByteArray();
+		
+		// step 3
+		byte[] Hs = H(s);
+		
+		BigInteger T = new BigInteger(r).xor(new BigInteger(Hs));
+		byte[] t = T.toByteArray();
+		
+		debug("H(s) length: " + Hs.length);
+		debug("t length: " + t.length);
+		/*for(int i = 0; i < r.length; i++){
+			t[i] = (byte) (r[i] ^ Hs[i]);
+		}
+		
+		//step 4
+		byte[] st = new byte[s.length + t.length];
+		System.arraycopy(s, 0, st, 0, s.length);
+		System.arraycopy(t, 0, st, s.length, t.length);
+		System.out.println(new String(st));
+		System.out.println("------------------------------");
+		
+		debug("st length:" + st.length);
+		
+		ST = new BigInteger(st);
+		}while(ST.compareTo(n) == -1);
+		
+		return ST.modPow(e, n).toByteArray();*/
 	}
 
 	/**
@@ -177,12 +251,45 @@ public class RSATool {
 	public byte[] decrypt(byte[] ciphertext) {
 		debug("In RSA decrypt");
 
+		// note t should read only 16 bytes
+		
 		// make sure class is initialized for decryption
 		if (d == null)
 			throw new IllegalStateException("RSA class not initialized for decryption");
 
-		// TODO: implement RSA-OAEP encryption here (replace following return
+		// TODO: implement RSA-OAEP decryption here (replace following return
 		// statement)
-		return ciphertext;
+
+		//BigInteger M = new BigInteger(ciphertext).modPow(d, n);
+		
+		BigInteger C = new BigInteger(ciphertext);
+		BigInteger M = C.modPow(d, n);
+		
+		/*// Chinese remainder 
+		// Step 1
+		BigInteger P1 = p.subtract(BigInteger.ONE);
+		BigInteger Q1 = q.subtract(BigInteger.ONE);
+		BigInteger DP = d.mod(P1);
+		BigInteger DQ = d.mod(Q1);
+		
+		// step 2
+		BigInteger C = new BigInteger(ciphertext);
+		BigInteger MP = C.modPow(DP,p);
+		BigInteger MQ = C.modPow(DQ,q);
+		
+		// step 3
+		//BigInteger x = p.mod();
+		BigInteger x = p.modInverse(q);
+		BigInteger px = p.multiply(x);
+		BigInteger qy = BigInteger.ONE.subtract(px);
+		
+		// step 4
+		BigInteger pxMQ = px.multiply(MQ);
+		BigInteger qyMP = qy.multiply(MP);
+		
+		BigInteger M = pxMQ.add(qyMP);
+		M = M.mod(n);*/
+		
+		return M.toByteArray();
 	}
 }

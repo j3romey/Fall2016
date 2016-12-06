@@ -133,6 +133,7 @@ public class Client {
 
 		byte[] encryptedKey = null;
 		try {
+			System.out.println(new String(raw));
 			encryptedKey = RSA.encrypt(raw);
 		} catch (IllegalArgumentException ex) {
 			System.out.println(ex);

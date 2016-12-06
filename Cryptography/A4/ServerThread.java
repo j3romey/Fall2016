@@ -121,6 +121,7 @@ public class ServerThread extends Thread {
 		byte[] encodedKey = null;
 		try {
 			encodedKey = RSA.decrypt(encryptedKey);
+			System.out.println("Decrypted key: "+ new String(encodedKey));
 		} catch (IllegalArgumentException ex) {
 			System.out.println(ex);
 		} catch (IllegalStateException ex) {
