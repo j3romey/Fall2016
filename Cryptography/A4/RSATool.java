@@ -96,7 +96,22 @@ public class RSATool {
 
 		return output;
 	}
-
+	public BigInteger createSophieGermain(){
+    	rnd= new SecureRandom();
+    	
+    	BigInteger Q;
+    	BigInteger P;
+    	
+		int i = 0;
+		do{
+			Q = new BigInteger(K*4-1, rnd);
+			P = Q.multiply(BigInteger.valueOf(2)).add(BigInteger.valueOf(1));
+		}while(!P.isProbablePrime(3));
+		
+		return P;
+    }
+	
+	
 	/**
 	 * Construct instance for decryption. Generates both public and private key
 	 * data.
@@ -111,19 +126,20 @@ public class RSATool {
 
 		rnd = new SecureRandom();
 		
-		p = new BigInteger(bitLen, certainty, rnd);
+		p = createSophieGermain();
+		q = createSophieGermain();
 		
-		
-		
-		do{
-			q = new BigInteger(bitLen, certainty, rnd);
-		}while(q.subtract(p).compareTo(BigInteger.valueOf((long) Math.pow(2, 16))) == 1);
-		
+
 		n = p.multiply(q);
+		
 		System.out.println("length of N :" + n.bitLength());
 		phiN = (p.subtract(BigInteger.ONE)).multiply(q.subtract(BigInteger.ONE));
 		
-		e = BigInteger.valueOf(65537);
+		e = new BigInteger("3");
+		
+		while(!(e.gcd(phiN)).equals(BigInteger.ONE)){
+			e = e.add(new BigInteger("2"));
+		}
 		
 		d = e.modInverse(phiN);
 	}
@@ -176,63 +192,40 @@ public class RSATool {
 
 		// regular RSA
 		
-		BigInteger M = new BigInteger(plaintext);
+		//BigInteger M = new BigInteger(plaintext);
 		
-		BigInteger C = M.modPow(e, n);
+		//BigInteger C = M.modPow(e, n);
 		
-		return C.toByteArray();
-		
-		// TODO: implement RSA-OAEP encryption here (replace following return
-		// statement)
-		
-		/*BigInteger ST = BigInteger.ZERO;
-		
-		do{
-		// step 1
-		byte[] r = new byte[K0];
-		rnd.nextBytes(r);
-		
+		//return C.toByteArray();
+
+	BigInteger BIG_st;	
+	
+	do{	
+		//step 1
+		rnd = new SecureRandom();
+		BigInteger r = new BigInteger(K0*8, rnd);
 		
 		// step 2
-		byte[] Gr = G(r);
+		byte[] zeros = new byte[K-K0-plaintext.length];
+		byte[] combine = new byte[K-K0];
 		
-		byte[] app = new byte[K1];
-		byte[] M_app = new byte[plaintext.length + K1];
-		System.arraycopy(plaintext, 0, M_app, 0, plaintext.length);
-		System.arraycopy(app, 0, M_app, plaintext.length, app.length);
+		System.arraycopy(plaintext, 0, combine, 0, plaintext.length);
+		System.arraycopy(zeros, 0, combine, plaintext.length, zeros.length);
 		
-		
-		debug("G(r) length: " + Gr.length);
-		debug("M_app length: " + M_app.length);
-		
-		BigInteger S = new BigInteger(M_app).xor(new BigInteger(Gr));
-		byte[] s = S.toByteArray();
+		BigInteger BIG_combine = new BigInteger(combine);
+		BigInteger BIG_Gr = new BigInteger(G(r.toByteArray()));
+		BigInteger BIG_s = BIG_combine.xor(BIG_Gr);
 		
 		// step 3
-		byte[] Hs = H(s);
+		BigInteger BIG_Hs = new BigInteger(1, H(BIG_s.toByteArray()));
+		BigInteger BIG_t = r.xor(BIG_Hs);
 		
-		BigInteger T = new BigInteger(r).xor(new BigInteger(Hs));
-		byte[] t = T.toByteArray();
+		BIG_st = new BigInteger(BIG_s.toString() + BIG_t.toString());
+	}while(BIG_st.compareTo(n) > 0 || BIG_st.signum() < 0);	
 		
-		debug("H(s) length: " + Hs.length);
-		debug("t length: " + t.length);
-		/*for(int i = 0; i < r.length; i++){
-			t[i] = (byte) (r[i] ^ Hs[i]);
-		}
-		
-		//step 4
-		byte[] st = new byte[s.length + t.length];
-		System.arraycopy(s, 0, st, 0, s.length);
-		System.arraycopy(t, 0, st, s.length, t.length);
-		System.out.println(new String(st));
-		System.out.println("------------------------------");
-		
-		debug("st length:" + st.length);
-		
-		ST = new BigInteger(st);
-		}while(ST.compareTo(n) == -1);
-		
-		return ST.modPow(e, n).toByteArray();*/
+		// step 4
+	return BIG_st.modPow(e, n).toByteArray();
+	
 	}
 
 	/**
@@ -261,9 +254,10 @@ public class RSATool {
 		// statement)
 
 		//BigInteger M = new BigInteger(ciphertext).modPow(d, n);
+		byte[] M = new byte[K0];
 		
 		BigInteger C = new BigInteger(ciphertext);
-		BigInteger M = C.modPow(d, n);
+		BigInteger st = C.modPow(d, n);
 		
 		/*// Chinese remainder 
 		// Step 1
@@ -290,6 +284,51 @@ public class RSATool {
 		BigInteger M = pxMQ.add(qyMP);
 		M = M.mod(n);*/
 		
-		return M.toByteArray();
+		// step 2
+		
+		int lastBits = 39;
+		
+		BigInteger limit = new BigInteger("2").pow(128);
+		
+		do{
+			char[] s_part = new char [st.toString().length()-lastBits];
+			char[] t_part = new char [lastBits];
+			
+			st.toString().getChars(0, s_part.length, s_part, 0);
+			st.toString().getChars(s_part.length, st.toString().length(), t_part, 0);
+			
+			BigInteger s = new BigInteger(String.valueOf(s_part));
+			BigInteger t = new BigInteger(String.valueOf(t_part));
+			
+			lastBits--;
+			if(t.compareTo(limit) > 0){
+				continue;
+			}
+			
+			BigInteger BIG_Hs = new BigInteger(1, H(s.toByteArray()));
+			BigInteger BIG_u = t.xor(BIG_Hs);
+			
+			BigInteger BIG_Gu = new BigInteger(G(BIG_u.toByteArray()));
+			BigInteger BIG_v = s.xor(BIG_Gu);
+			
+			byte[] vBytes = BIG_v.toByteArray();
+			
+			int zeroCounter = 0;
+			boolean check = true;
+
+			for(int i = 0; i < K-K0-K1; i++){
+				if(vBytes[vBytes.length-1-i] != 0){
+					check = false;
+					break;
+				}
+			}
+			
+			if(check){
+				System.arraycopy(vBytes, 0, M, 0, M.length);
+				break;
+			}			
+		}while (lastBits > 35);
+		
+		return M;
 	}
 }
