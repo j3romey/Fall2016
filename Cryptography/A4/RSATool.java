@@ -125,6 +125,8 @@ public class RSATool {
 		debug = setDebug;
 
 		rnd = new SecureRandom();
+
+		debug("generating server variables");
 		
 		p = createSophieGermain();
 		q = createSophieGermain();
@@ -132,7 +134,6 @@ public class RSATool {
 
 		n = p.multiply(q);
 		
-		System.out.println("length of N :" + n.bitLength());
 		phiN = (p.subtract(BigInteger.ONE)).multiply(q.subtract(BigInteger.ONE));
 		
 		e = new BigInteger("3");
@@ -152,7 +153,7 @@ public class RSATool {
 	public RSATool(BigInteger new_n, BigInteger new_e, boolean setDebug) {
 		// set the debug flag
 		debug = setDebug;
-
+		debug("setting client variables");
 		// initialize random number generator
 		rnd = new SecureRandom();
 
@@ -160,8 +161,6 @@ public class RSATool {
 		e = new_e;
 
 		d = p = q = null;
-
-		// TODO: initialize RSA decryption variables here
 	}
 
 	public BigInteger get_n() {
@@ -193,12 +192,12 @@ public class RSATool {
 		// regular RSA
 		
 		//BigInteger M = new BigInteger(plaintext);
-		
 		//BigInteger C = M.modPow(e, n);
-		
 		//return C.toByteArray();
 
 	BigInteger BIG_st;	
+	
+	debug("encryption start");
 	
 	do{	
 		//step 1
@@ -224,6 +223,7 @@ public class RSATool {
 	}while(BIG_st.compareTo(n) > 0 || BIG_st.signum() < 0);	
 		
 		// step 4
+	debug("encryption finished");
 	return BIG_st.modPow(e, n).toByteArray();
 	
 	}
@@ -242,7 +242,7 @@ public class RSATool {
 	 * @return resulting plaintexttext
 	 */
 	public byte[] decrypt(byte[] ciphertext) {
-		debug("In RSA decrypt");
+		debug("Begin RSA decryption");
 
 		// note t should read only 16 bytes
 		
@@ -250,16 +250,16 @@ public class RSATool {
 		if (d == null)
 			throw new IllegalStateException("RSA class not initialized for decryption");
 
-		// TODO: implement RSA-OAEP decryption here (replace following return
-		// statement)
-
+		debug("Begin Chinese Remainder Theorem");
+		
 		//BigInteger M = new BigInteger(ciphertext).modPow(d, n);
 		byte[] M = new byte[K0];
 		
 		BigInteger C = new BigInteger(ciphertext);
-		BigInteger st = C.modPow(d, n);
+		//BigInteger st = C.modPow(d, n);
 		
-		/*// Chinese remainder 
+		
+		// Chinese remainder 
 		// Step 1
 		BigInteger P1 = p.subtract(BigInteger.ONE);
 		BigInteger Q1 = q.subtract(BigInteger.ONE);
@@ -267,7 +267,7 @@ public class RSATool {
 		BigInteger DQ = d.mod(Q1);
 		
 		// step 2
-		BigInteger C = new BigInteger(ciphertext);
+		//BigInteger C = new BigInteger(ciphertext);
 		BigInteger MP = C.modPow(DP,p);
 		BigInteger MQ = C.modPow(DQ,q);
 		
@@ -281,10 +281,11 @@ public class RSATool {
 		BigInteger pxMQ = px.multiply(MQ);
 		BigInteger qyMP = qy.multiply(MP);
 		
-		BigInteger M = pxMQ.add(qyMP);
-		M = M.mod(n);*/
+		BigInteger st = pxMQ.add(qyMP);
+		st = st.mod(n);
 		
-		// step 2
+		
+		debug("Remove Padding 0's");
 		
 		int lastBits = 39;
 		
@@ -328,6 +329,8 @@ public class RSATool {
 				break;
 			}			
 		}while (lastBits > 35);
+		
+		debug("Returning Decryption");
 		
 		return M;
 	}
