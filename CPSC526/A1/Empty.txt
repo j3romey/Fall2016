@@ -1,0 +1,10 @@
+Running the backdoor
+ -simply run the command “python3 server.py”
+
+To Connect
+ - run “nc localhost 1337”
+
+Supported commands
+
+PASSWORD: 123456
+NOTE: password must be given before the following commands can be called. 

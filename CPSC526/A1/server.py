@@ -21,8 +21,7 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
 
        PASSWORD = "123456"
        PASS_ACPT = False
-
-       print("WELCOME SCUMBAG")
+       self.request.send(bytearray("WELCOME SCUMBAG", "utf-8"))
        while 1: 
            if PASS_ACPT:
                self.request.send(bytearray("Enter CMD: ", "utf-8"))
