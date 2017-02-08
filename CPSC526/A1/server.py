@@ -20,7 +20,7 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
            self.request.send(bytearray("net  - show ifconfig configurations \n", "utf-8")) 
 
        PASSWORD = "123456"
-       PASS_ACPT = False
+       PASS_ACPT = True
        self.request.send(bytearray("WELCOME SCUMBAG \n", "utf-8"))
        while 1: 
            if PASS_ACPT:
@@ -46,7 +46,7 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
                 self.request.send(bytearray("PASSWORD ACCEPTED \n", "utf-8"))
                 PASS_ACPT = True 
                 #create list
-           elif data.strip() == "off" and PASS_ACPT:
+           elif data.strip() == "shutdown" and PASS_ACPT:
                 self.request.send(bytearray("Please don't use me again, GOODBYE \n", "utf-8"))
                 self.server.shutdown()
                 os.kill(os.getpid(),signal.SIGHUP)
@@ -83,7 +83,7 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
                     self.request.send(bytearray("INVALID COMMAND \n", "utf-8"))
 
 if __name__ == "__main__":
-   HOST, PORT = "localhost", 1337
+   HOST, PORT = "localhost", 5555
    server = socketserver.ThreadingTCPServer((HOST, PORT), MyTCPHandler)
    print("Server On")
    try:
