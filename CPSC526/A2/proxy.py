@@ -4,6 +4,7 @@ import socket, threading
 import subprocess, sys, os, signal
 class MyTCPHandler(socketserver.BaseRequestHandler):
     BUFFER_SIZE = 4096
+
     def handle(self):
         logOptions = self.server.logOptions
         
@@ -16,7 +17,16 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
         fw.write("Port logger running: srcPort=" + str(self.server.dstPort) + " host=" + self.server.server_name + "\n")
         ServAdd, ServPort = self.server.server_address
         fw.write("New connection:" + time.strftime("%c") + ",from:"  + ServAdd + "\n")
-
+        
+        #creates thread to recieve
+        def recv():
+            while True:
+                data = client.recv(self.BUFFER_SIZE)
+                #print("from server" + data.decode("utf-8"))
+                self.request.sendall(data)
+        
+        threading.Thread(target=recv).start()
+        
         while 1:
             data = self.request.recv(self.BUFFER_SIZE)
             if len(data) == self.BUFFER_SIZE:
@@ -37,14 +47,14 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
             fw.write("--->" + data.strip() + '\n')
             fw.flush()"""
             #client.send(bytearray(data, 'utf-8'))
-            
+            print("from client" + data.decode ("utf-8"))
             client.send(data)
-            data2 = client.recv(self.BUFFER_SIZE)
+            #data2 = client.recv(self.BUFFER_SIZE)
             
             #print(data2.strip())
             #fw.write("<---" + data2.decode('utf-8') + '\n')
             #fw.flush()
-            self.request.sendall(data2)
+            #self.request.sendall(data2)
             
 
 if __name__ == "__main__":
@@ -52,7 +62,7 @@ if __name__ == "__main__":
     argLen1 = 4
     argLen2 = 5
 
-    print(len(sys.argv))
+    #print(len(sys.argv))
     if(len(sys.argv) == argLen1): #no log option
         srcPort = int (sys.argv[argLen1-3])
         server_name = sys.argv[argLen1-2]
@@ -64,13 +74,13 @@ if __name__ == "__main__":
         dstPort = int (sys.argv[argLen1-1])
     else:
         print("Usage: [logOptions] <srcPort> <server> <dstPort>")
-    print(str(srcPort) + " " + server_name + " " + str(dstPort))
+    #print(str(srcPort) + " " + server_name + " " + str(dstPort))
     HOST, PORT = "localhost", srcPort
     server = socketserver.ThreadingTCPServer((HOST, PORT), MyTCPHandler)
     if(len(sys.argv) == 5):
-		server.logOptions = logOptions
-	else
-		server.logOptions = ""
+        server.logOptions = logOptions
+    else:
+        server.logOptions = ""
     server.dstPort = dstPort
     server.server_name = server_name
     server.serve_forever()
