@@ -45,7 +45,6 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
                         break
             if len(data) == 0:
                 break
-
             data_decode = data.decode("utf-8")
             # TODO over 9000 if statements
             if(logOptions == "-raw"):
