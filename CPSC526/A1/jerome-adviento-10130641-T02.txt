@@ -1,0 +1,21 @@
+Running the backdoor
+ -simply run the command “python3 server.py”
+
+To Connect
+ - run “nc localhost 1337”
+
+Supported commands
+
+PASSWORD: 123456
+NOTE: password must be given before the following commands can be called. 
+
+help - list all the available commands
+off - terminates the backdoor
+pwd - returns current directory
+ls - lists the current files in the directory
+cat <file> - returns the contents of a file
+cd <dir> - changes current working directory
+
+who - list users currently logged in
+ps - show current running processes
+net - shows ifconfig configurations

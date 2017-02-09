@@ -23,6 +23,14 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
             while True:
                 data = client.recv(self.BUFFER_SIZE)
                 #print("from server" + data.decode("utf-8"))
+                    if(logOptions == "-raw"):
+                        print("raw")
+                    elif(logOptions == "-strip"):
+                        print("strip")
+                    elif("-hex"):
+                        print("hex")
+                    elif("-auto???"):
+                        print()
                 self.request.sendall(data)
         
         threading.Thread(target=recv).start()
@@ -37,9 +45,24 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
                         break
             if len(data) == 0:
                 break
-                
+
+            data_decode = data.decode("utf-8")
             # TODO over 9000 if statements
-                
+            if(logOptions == "-raw"):
+                fw.write("--->" + data_decode.strip() + '\n')
+            elif(logOptions == "-strip"):
+                data_printable = ""
+                for char in data_decode:
+                    if not (char in string.printable):
+                        data_printable += "."
+                    else:
+                        data_printable += char
+                fw.write(data_printable)
+                print("strip")
+            elif(logOptions == "-hex"):
+                data_hex = ":".join("{:02x}".format(ord(c)) for c in data_decode)
+                fw.write("--->" + data_hex + '\n')
+                print("-hex")
             """data = data.decode( "utf-8")
             self.request.sendall( bytearray( "You said: " + data, "utf-8"))
             print("%s (%s) wrote: %s" % (self.client_address[0], 
@@ -47,14 +70,9 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
             fw.write("--->" + data.strip() + '\n')
             fw.flush()"""
             #client.send(bytearray(data, 'utf-8'))
-            print("from client" + data.decode ("utf-8"))
+            #print("from client" + data.decode ("utf-8"))
             client.send(data)
-            #data2 = client.recv(self.BUFFER_SIZE)
             
-            #print(data2.strip())
-            #fw.write("<---" + data2.decode('utf-8') + '\n')
-            #fw.flush()
-            #self.request.sendall(data2)
             
 
 if __name__ == "__main__":
