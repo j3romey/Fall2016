@@ -21,11 +21,11 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
         def recv():
             while True:
                 data = client.recv(self.BUFFER_SIZE)
-                data_decode = data.decode("utf-8")
-                print("from server" + data.decode("utf-8"))
                 if(logOptions=="-raw"):
-                    print("raw")
+                    fw.write("<---" + data.decode("ascii") + '\n')
+                    fw.flush()
                 elif(logOptions == "-strip"):
+                    data_decode = data.decode("utf-8")
                     data_printable = ""
                     for char in data_decode:
                         if not (char in string.printable):
@@ -34,13 +34,11 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
                             data_printable += char
                     fw.write("<---" +data_printable + '\n')
                     fw.flush()
-                    print("strip")
                 elif(logOptions == "-hex"):
-                    print('derp')
+                    data_decode = data.decode("utf-8")
                     data_hex = ":".join("{:02x}".format(ord(c)) for c in data_decode)
                     fw.write("<---" + data_hex + '\n')
                     fw.flush()
-                    print(data_hex)
                 elif(logOptions.startswith('-auto')):
                     nVal = int(logOptions[5:])
                     def arSplit(l, n):
@@ -80,11 +78,13 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
                         break
             if len(data) == 0:
                 break
-            data_decode = data.decode("utf-8")
-            # TODO over 9000 if statements
+            
             if(logOptions == "-raw"):
+                data_decode = data.decode("ascii")
                 fw.write("--->" + data_decode.strip() + '\n')
+                fw.flush()
             elif(logOptions == "-strip"):
+                data_decode = data.decode("utf-8")
                 data_printable = ""
                 for char in data_decode:
                     if not (char in string.printable):
@@ -95,18 +95,38 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
                 fw.flush()
                 print("strip")
             elif(logOptions == "-hex"):
+                data_decode = data.decode("utf-8")
                 data_hex = ":".join("{:02x}".format(ord(c)) for c in data_decode)
                 fw.write("--->" + data_hex + '\n')
                 fw.flush()
                 print(data_hex)
-            """data = data.decode( "utf-8")
-            self.request.sendall( bytearray( "You said: " + data, "utf-8"))
-            print("%s (%s) wrote: %s" % (self.client_address[0], 
-            threading.currentThread().getName(), data.strip()))
-            fw.write("--->" + data.strip() + '\n')
-            fw.flush()"""
-            #client.send(bytearray(data, 'utf-8'))
-            #print("from client" + data.decode ("utf-8"))
+            elif(logOptions.startswith('-auto')):
+                nVal = int(logOptions[5:])
+                def arSplit(l, n):
+                    n = max(1, n)
+                    return (l[i:i+n] for i in range(0, len(l), n))
+                dSplit = arSplit(data, nVal)
+                for vals in dSplit:
+                    outstring = ""
+                    counter = 0
+                    for byte in vals:
+                        if (byte == 92): # Backslash
+                            outstring += '\\\\'
+                        elif (byte == 9): # Tab
+                            outstring += '\\t'
+                        elif (byte == 10): # Newline
+                            outstring += '\\n'
+                        elif (byte == 13): # Carriage return
+                            outstring += '\\r'
+                        elif (32 <= byte <= 127):
+                            outstring += chr(byte)
+                        else:
+                            outstring += '\\' + str(hex(byte))[2:]
+                        counter += 1
+                    print(outstring + '\n')
+                    fw.write('<---' + outstring + '\n')
+                    fw.flush()
+                
             client.send(data)
 
 
