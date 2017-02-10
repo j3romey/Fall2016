@@ -1,2 +1,3 @@
-Port logger running: srcPort=22 host=localhost
-New connection:Thu Feb  9 13:16:36 2017,from:127.0.0.1
+Port logger running: srcPort=2000 host=localhost
+New connection:Thu Feb  9 17:55:55 2017,from:127.0.0.1
+<---test\n
