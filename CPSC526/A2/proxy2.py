@@ -4,41 +4,46 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
     BUFFER_SIZE = 4096
     
     def handle(self):
-        tempFile = 'temp'
-        
         logOptions = self.server.logOptions
+        logFile = 'temp'
         
-        open(tempFile, 'w')
-        fw = open(tempFile, 'a')
+        fw = open(logFile, 'w')
         
+        # Splits an array into smaller n-length chunks
+        def arSplit(l, n):
+            n = max(1, n)
+            return (l[i:i+n] for i in range(0, len(l), n))
+        
+        # Saves the specified data to a log and print it out
+        def log(string):
+            if (logOptions != ''):
+                fw.write(string + '\n')
+                fw.flush()
+            print(string)
+            
         # Socket for connecting proxy to remote server
         client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         client.connect((self.server.server_name, self.server.dstPort))
         
-        fw.write("Port logger running: srcPort=" + str(self.server.dstPort) + " host=" + self.server.server_name + "\n")
+        log("Port Forwarder/Logger\nSource Port: " + str(self.server.srcPort) + "\nRemote Host: " + self.server.server_name + "\nRemote Port: " + str(self.server.dstPort))
         ServAdd, ServPort = self.server.server_address
-        fw.write("New connection:" + time.strftime("%c") + ",from:"  + ServAdd + "\n")
+        log("New connection: " + time.strftime("%c") + " from "  + ServAdd)
         
         # Main data recieve function and loop
         def recv(inbound, outbound, arrow):
-            def arSplit(l, n):
-                n = max(1, n)
-                return (l[i:i+n] for i in range(0, len(l), n))
-            
             while True:
                 data = inbound.recv(self.BUFFER_SIZE)
                 if len(data) == self.BUFFER_SIZE:
                     while 1:
                         try:  # error means no more data
-                            data += self.request.recv(self.BUFFER_SIZE, socket.MSG_DONTWAIT)
+                            data += inbound.recv(self.BUFFER_SIZE, socket.MSG_DONTWAIT)
                         except:
                             break
                 if len(data) == 0:
                     break
                 
                 if (logOptions == '-raw'):
-                    fw.write(arrow + data.decode('ascii') + '\n')
-                    fw.flush()
+                    log(arrow + data.decode('ascii'))
                 elif (logOptions == '-strip'):
                     data_decode = data.decode('utf-8')
                     data_printable = ''
@@ -47,8 +52,7 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
                             data_printable += '.'
                         else:
                             data_printable += char
-                    fw.write(arrow +data_printable + '\n')
-                    fw.flush()
+                    log(arrow +data_printable)
                 elif (logOptions == '-hex'):
                     data_decode = data.decode('utf-8')
                     data_decode_split = arSplit(data_decode, 16)
@@ -63,8 +67,7 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
                             else:
                                 data_hex += char
                         data_hex += '|'
-                        fw.write(arrow + data_hex + '\n')
-                        fw.flush()
+                        log(arrow + data_hex)
                 elif (logOptions.startswith('-auto')):
                     nVal = int(logOptions[5:])
                     dSplit = arSplit(data, nVal)
@@ -86,8 +89,7 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
                                 outstring += '\\' + str(hex(byte))[2:]
                             counter += 1
                         print(outstring + '\n')
-                        fw.write(arrow + outstring + '\n')
-                        fw.flush()
+                        log(arrow + outstring)
                 outbound.sendall(data)
                 
         # Start separate thread to forward server to user
@@ -97,8 +99,6 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
         recv(self.request, client, '--> ')
         
 if __name__ == "__main__":
-    
-    
     run = True
     if (len(sys.argv) == 4): # No log option
         srcPort = int(sys.argv[1])
@@ -110,7 +110,7 @@ if __name__ == "__main__":
         server_name = sys.argv[3]
         dstPort = int(sys.argv[4])
     else:
-        print("Usage: [logOptions] <srcPort> <server> <dstPort>")
+        print('Usage: [logOptions] <srcPort> <server> <dstPort>')
         run = False
     
     if (run):
@@ -121,6 +121,7 @@ if __name__ == "__main__":
             server.logOptions = logOptions
         else:
             server.logOptions = ''
+        server.srcPort = srcPort
         server.dstPort = dstPort
         server.server_name = server_name
         server.serve_forever()
